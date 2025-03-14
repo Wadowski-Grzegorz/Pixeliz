@@ -7,4 +7,7 @@ import lombok.Setter;
 @Setter
 public class DrawingRequest {
     private String grid;
+    private String name;
+    private int size_x;
+    private int size_y;
 }

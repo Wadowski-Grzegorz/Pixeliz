@@ -19,9 +19,9 @@ public class DrawingController {
         this.drawingService = drawingService;
     }
 
-    @PostMapping("/saveDrawing")
-    public ResponseEntity<Drawing> saveDrawing(@RequestBody DrawingRequest request) {
-        Drawing savedDrawing = drawingService.saveDrawing(request.getGrid());
+    @PostMapping("/createDrawing")
+    public ResponseEntity<Drawing> createDrawing(@RequestBody DrawingRequest drawingRequest) {
+        Drawing savedDrawing = drawingService.createDrawing(drawingRequest);
         return ResponseEntity.ok(savedDrawing);
     }
 
