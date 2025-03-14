@@ -1,9 +1,8 @@
 package com.example.backend.controller;
 
-import com.example.backend.dto.DrawingUpdateRequest;
 import com.example.backend.model.Drawing;
 import com.example.backend.service.DrawingService;
-import com.example.backend.dto.DrawingRequest;
+import com.example.backend.dto.DrawingDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,8 +22,8 @@ public class DrawingController {
     }
 
     @PostMapping()
-    public ResponseEntity<Drawing> createDrawing(@RequestBody DrawingRequest drawingRequest) {
-        Drawing drawing = drawingService.createDrawing(drawingRequest);
+    public ResponseEntity<Drawing> createDrawing(@RequestBody DrawingDTO drawingDTO) {
+        Drawing drawing = drawingService.createDrawing(drawingDTO);
         return new ResponseEntity<>(drawing, HttpStatus.CREATED);
     }
 
@@ -44,9 +43,9 @@ public class DrawingController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Drawing> putDrawing(@PathVariable Long id, @RequestBody DrawingUpdateRequest drawingUpdateRequest) {
+    public ResponseEntity<Drawing> putDrawing(@PathVariable Long id, @RequestBody DrawingDTO drawingUpdate) {
         try{
-            Drawing drawing = drawingService.updateDrawing(id, drawingUpdateRequest);
+            Drawing drawing = drawingService.updateDrawing(id, drawingUpdate);
             return new ResponseEntity<>(drawing, HttpStatus.OK);
         } catch(NoSuchElementException e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

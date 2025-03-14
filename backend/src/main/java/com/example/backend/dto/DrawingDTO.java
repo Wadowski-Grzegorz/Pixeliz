@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class DrawingRequest {
+public class DrawingDTO {
     private String grid;
     private String name;
     private int size_x;
