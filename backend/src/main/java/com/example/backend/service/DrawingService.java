@@ -7,7 +7,7 @@ import com.example.backend.repository.DrawingRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 
 @Service
 public class DrawingService {
@@ -31,7 +31,7 @@ public class DrawingService {
     public Drawing getDrawing(Long id) {
         return drawingRepository
                 .findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Drawing not found"));
+                .orElseThrow(() -> new NoSuchElementException("Drawing not found"));
     }
 
     public List<Drawing> getDrawings(){

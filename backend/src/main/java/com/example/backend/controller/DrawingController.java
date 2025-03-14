@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/drawing")
@@ -32,7 +33,7 @@ public class DrawingController {
         try{
             Drawing drawing = drawingService.getDrawing(id);
             return new ResponseEntity<>(drawing, HttpStatus.OK);
-        } catch(IllegalArgumentException e){
+        } catch(NoSuchElementException e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -47,7 +48,7 @@ public class DrawingController {
         try{
             Drawing drawing = drawingService.updateDrawing(id, drawingUpdateRequest);
             return new ResponseEntity<>(drawing, HttpStatus.OK);
-        } catch(IllegalArgumentException e){
+        } catch(NoSuchElementException e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -57,7 +58,7 @@ public class DrawingController {
         try{
             drawingService.deleteDrawing(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }catch(IllegalArgumentException e){
+        }catch(NoSuchElementException e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
