@@ -2,9 +2,12 @@ package com.example.backend.service;
 
 import com.example.backend.dto.DrawingDTO;
 import com.example.backend.model.Drawing;
+import com.example.backend.model.Role;
+import com.example.backend.model.User;
 import com.example.backend.repository.DrawingRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -12,9 +15,16 @@ import java.util.NoSuchElementException;
 public class DrawingService {
 
     private final DrawingRepository drawingRepository;
+    private final UserService userService;
+    private final RoleService roleService;
 
-    public DrawingService(DrawingRepository drawingRepository) {
+    public DrawingService(
+            DrawingRepository drawingRepository,
+            UserService userService,
+            RoleService roleService) {
         this.drawingRepository = drawingRepository;
+        this.userService = userService;
+        this.roleService = roleService;
     }
 
     public Drawing createDrawing(DrawingDTO drawingDTO) {
@@ -47,5 +57,17 @@ public class DrawingService {
     public void deleteDrawing(Long id){
         getDrawing(id);
         drawingRepository.deleteById(id);
+    }
+
+    public void addUserToDrawing(Long id, Long roleId, String username) {
+        // not complited, it doesn't add any record to table
+        User user = userService.getUser(username);
+        Drawing drawing = getDrawing(id);
+        Role role = roleService.getRole(id);
+    }
+
+    public List<User> getDrawingUsers(){
+        // temp as there is no such table yet
+        return new ArrayList<User>();
     }
 }

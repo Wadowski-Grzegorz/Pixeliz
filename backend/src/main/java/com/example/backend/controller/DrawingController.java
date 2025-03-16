@@ -1,6 +1,8 @@
 package com.example.backend.controller;
 
+import com.example.backend.dto.AddUserToDrawingDTO;
 import com.example.backend.model.Drawing;
+import com.example.backend.model.User;
 import com.example.backend.service.DrawingService;
 import com.example.backend.dto.DrawingDTO;
 import org.springframework.http.HttpStatus;
@@ -61,4 +63,37 @@ public class DrawingController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    @PostMapping("/{id}/user")
+    public ResponseEntity<?> addUserToDrawing(@PathVariable Long id, @RequestBody AddUserToDrawingDTO AddUserToDrawingDTO){
+        try{
+            Long roleId = AddUserToDrawingDTO.getRoleId();
+            String username = AddUserToDrawingDTO.getUsername();
+            drawingService.addUserToDrawing(id, roleId, username);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } catch(NoSuchElementException e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/{id}/user")
+    public ResponseEntity<List<User>> getUsersFromDrawing(@PathVariable Long id){
+        return new ResponseEntity<>(drawingService.getDrawingUsers(), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/user/{userId}")
+    public ResponseEntity<User> getUserFromDrawing(@PathVariable Long id, @PathVariable Long userId){
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    @PutMapping("{id}/user/{userId}")
+    public ResponseEntity<?> updateUserRole(@PathVariable Long id, @PathVariable Long userId){
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    @DeleteMapping("/{id}/user/{userId}")
+    public ResponseEntity<?> deleteUserFromDrawing(@PathVariable Long id, @PathVariable Long userId){
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
 }

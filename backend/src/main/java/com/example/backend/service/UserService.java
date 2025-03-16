@@ -22,6 +22,12 @@ public class UserService {
                 .orElseThrow(() -> new NoSuchElementException("User not found"));
     }
 
+    public User getUser(String username){
+        return userRepository
+                .findByUsername(username)
+                .orElseThrow(() -> new NoSuchElementException("User not found"));
+    }
+
     // this will go to login
     public User createUser(UserDTO userDTO){
         return userRepository.save(DTOtoUser(userDTO));
