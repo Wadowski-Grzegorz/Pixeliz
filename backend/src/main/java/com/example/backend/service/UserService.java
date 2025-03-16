@@ -1,5 +1,6 @@
 package com.example.backend.service;
 
+import com.example.backend.dto.LoginDTO;
 import com.example.backend.dto.UserDTO;
 import com.example.backend.model.User;
 import com.example.backend.repository.UserRepository;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -26,6 +28,25 @@ public class UserService {
         return userRepository
                 .findByUsername(username)
                 .orElseThrow(() -> new NoSuchElementException("User not found"));
+    }
+
+    public User getUser(LoginDTO loginDTO){
+        String login = loginDTO.getLogin();
+        String email = loginDTO.getEmail();
+        String password = loginDTO.getPassword();
+
+        if(password.isBlank() || (email.isBlank() && login.isBlank())){
+            throw new IllegalArgumentException("Blank credentials");
+        }
+
+        Optional<User> user = Optional.empty();
+        if(!email.isBlank()){
+            user = userRepository.findByEmailAndPassword(email, password);
+        } else if(!login.isBlank()){
+            user = userRepository.findByLoginAndPassword(login, password);
+        }
+
+        return user.orElseThrow(() -> new NoSuchElementException("User not found"));
     }
 
     // this will go to login

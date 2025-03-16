@@ -1,14 +1,12 @@
 package com.example.backend.dto;
 
-import lombok.*;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-public class UserDTO {
-    private String username;
+public class LoginDTO {
     private String login;
     private String email;
     private String password;
