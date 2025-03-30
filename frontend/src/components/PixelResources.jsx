@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 //TODO:
 //Click on drawing goes to /id with drawing
@@ -23,7 +24,9 @@ const PixelResources = () =>{
             <div>
                 {
                     drawings.map((d) =>
-                        <div key={d.id}>{d.name}hyhy</div>
+                        <li key={d.id}>
+                            <Link to={`/drawing/${d.id}`}>{d.name || "drawing"}</Link>
+                        </li>
                     )
                 }
             </div>

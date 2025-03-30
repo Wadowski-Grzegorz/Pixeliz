@@ -11,6 +11,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<PixelDraw/>}/>
+        <Route path="/drawing/:id" element={<PixelDraw/>}/>
         <Route path="/resources" element={<PixelResources/>}/>
       </Routes>
       
