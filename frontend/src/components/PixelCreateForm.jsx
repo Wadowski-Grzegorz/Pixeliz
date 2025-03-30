@@ -1,14 +1,17 @@
-import {useState, useEffect} from 'react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 
-const PixelCreateForm = ({onSubmit, togglePop}) => {
+const PixelCreateForm = ({togglePop}) => {
 
     const [formData, setFormData] = useState({drawName: "", sizeX: "", sizeY: ""});
+    const navigate = useNavigate();
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        onSubmit(formData);
         togglePop();
+        navigate("/", {state: formData});
+        window.location.reload();
     }
 
     const handleChange = (event) => {
