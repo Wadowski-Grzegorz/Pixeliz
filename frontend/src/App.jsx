@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import PixelDraw from "./components/pixelDraw";
+import PixelDraw from "./components/Draw/PixelDraw.jsx";
 import PixelResources from "./components/PixelResources";
 import Navbar from "./components/Navbar.tsx"
 
