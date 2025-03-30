@@ -3,6 +3,8 @@ package com.example.backend.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Set;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -26,4 +28,7 @@ public class User {
 
     @Column(unique = true, nullable = false)
     private String email;
+
+    @OneToMany(mappedBy = "user")
+    Set<UserDrawingRole> userDrawingRoles;
 }

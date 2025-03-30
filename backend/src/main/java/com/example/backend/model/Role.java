@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.antlr.v4.runtime.misc.NotNull;
 
+import java.util.Set;
+
 @Entity
 @Getter
 @Setter
@@ -33,4 +35,6 @@ public class Role {
     @Column(columnDefinition="boolean default false")
     private boolean delete;
 
+    @OneToMany(mappedBy="role")
+    private Set<UserDrawingRole> userDrawingRoles;
 }

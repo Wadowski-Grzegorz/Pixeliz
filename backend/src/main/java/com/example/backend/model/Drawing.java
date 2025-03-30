@@ -3,6 +3,8 @@ package com.example.backend.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Set;
+
 @Entity
 @Getter
 @Setter
@@ -20,4 +22,7 @@ public class Drawing {
     private String name;
     private int size_x;
     private int size_y;
+
+    @OneToMany(mappedBy = "drawing")
+    Set<UserDrawingRole> userDrawingRoles;
 }
