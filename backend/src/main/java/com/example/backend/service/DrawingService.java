@@ -60,10 +60,10 @@ public class DrawingService {
     }
 
     public void addUserToDrawing(Long id, Long roleId, String username) {
-        // not complited, it doesn't add any record to table
         User user = userService.getUser(username);
         Drawing drawing = getDrawing(id);
         Role role = roleService.getRole(id);
+
     }
 
     public List<User> getDrawingUsers(){

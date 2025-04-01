@@ -33,4 +33,10 @@ public class UserDrawingRole {
     @NotNull
     Role role;
 
+    public UserDrawingRole(User user, Drawing drawing, Role role){
+        this.user = user;
+        this.drawing = drawing;
+        this.role = role;
+        this.id = new UserDrawingKey(drawing.getId(), user.getId());
+    }
 }
