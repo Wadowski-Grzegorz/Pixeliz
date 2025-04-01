@@ -99,10 +99,16 @@ input{
 
 .tile li{
     list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background-color: #CCCCCC;
-    padding: 60px 50px;
     border-radius: 8px;
     color: #494446;
+    width: 100px;
+    height: 100px;
+    padding: 10px;
+    box-sizing: border-box;
 }
 
 .tile li:hover{
@@ -112,4 +118,15 @@ input{
 
 .pixel-draw{
     
+}
+
+.button-icon{
+    all: unset;
+    cursor: pointer;
+}
+
+.title{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
 }
