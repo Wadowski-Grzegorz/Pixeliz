@@ -23,8 +23,19 @@ function Navbar(){
                     <Link to="/Resources">Resources</Link>
                 </div>
             </nav>
+
             <div>
-                {formSeen ? <PixelCreateForm togglePop={togglePop}/> : null}
+                {
+                    formSeen && 
+                    (
+                        <>
+                            <div className="popup-back"/>
+                            <div className="popup">
+                                <PixelCreateForm togglePop={togglePop}/>
+                            </div>
+                        </>
+                    )
+                }
             </div>
         </>
     );

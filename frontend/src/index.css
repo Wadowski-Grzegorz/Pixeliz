@@ -69,6 +69,7 @@ input{
     border-bottom: 2px solid #5E5E5E;
     padding: 5px;
     margin: 0 0 10px 0;
+    color: #b8adb2;
 }
 
 .navbar div{
@@ -79,9 +80,13 @@ input{
 }
 
 .navbar a{
-    color: #9F9399;
+    color: inherit;
     text-decoration: none;
     font-weight: bold;
+}
+
+.navbar button{
+    color: inherit;
 }
 
 .resources{
@@ -129,4 +134,27 @@ input{
     display: flex;
     flex-direction: row;
     gap: 10px;
+}
+
+.popup-back{
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    backdrop-filter: blur(2px);
+}
+
+.popup{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    background-color: #575757;
+    border: 1px solid #767944;
+    border-radius: 10px;
+    padding: 10px;
+    transform: translate(-50%, -50%);
+    color: #b8adb2;
+}
+
+.popup button{
+    color: #b8adb2;
 }
