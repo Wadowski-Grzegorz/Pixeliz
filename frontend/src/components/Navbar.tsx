@@ -13,9 +13,9 @@ function Navbar(){
 
     return(
         <>
-            <nav>
+            <nav className="navbar">
                 <div>
-                    <button onClick={togglePop}>New</button>
+                    <button onClick={togglePop}>New Project</button>
                 </div>
 
                 <div>
@@ -23,7 +23,6 @@ function Navbar(){
                     <Link to="/Resources">Resources</Link>
                 </div>
             </nav>
-
             <div>
                 {formSeen ? <PixelCreateForm togglePop={togglePop}/> : null}
             </div>

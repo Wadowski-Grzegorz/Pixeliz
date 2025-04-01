@@ -21,12 +21,12 @@ const PixelResources = () =>{
     return(
         <>
             <h1>Resources</h1>
-            <div>
+            <div className="resources">
                 {
                     drawings.map((d) =>
-                        <li key={d.id}>
-                            <Link to={`/drawing/${d.id}`}>{d.name || "drawing"}</Link>
-                        </li>
+                        <Link to={`/drawing/${d.id}`} key={d.id} className="tile">
+                            <li>{d.name || "drawing"}</li>
+                        </Link>
                     )
                 }
             </div>

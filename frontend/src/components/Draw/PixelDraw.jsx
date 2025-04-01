@@ -138,7 +138,7 @@ const PixelDraw = () => {
     }
 
     return(
-        <>
+        <div className="pixel-draw">
             <canvas 
                 ref={canvasRef}
                 width={columns * PIXEL_SIZE}
@@ -177,7 +177,7 @@ const PixelDraw = () => {
                     <button onClick={() => loadDrawing(drawingId)}>Load drawing</button>
                 </div>
             </div>
-        </>
+        </div>
     );
 }
 

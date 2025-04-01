@@ -11,14 +11,16 @@ function App() {
     <BrowserRouter>
       <Navbar/>
 
-      <Routes>
-        <Route path="login" element={<Login/>}/>
-        <Route path="register" element={<Register/>}/>
+      <div className="app">
+        <Routes>
+          <Route path="login" element={<Login/>}/>
+          <Route path="register" element={<Register/>}/>
 
-        <Route path="/" element={<PixelDraw/>}/>
-        <Route path="/drawing/:id" element={<PixelDraw/>}/>
-        <Route path="/resources" element={<PixelResources/>}/>
-      </Routes>
+          <Route path="/" element={<PixelDraw/>}/>
+          <Route path="/drawing/:id" element={<PixelDraw/>}/>
+          <Route path="/resources" element={<PixelResources/>}/>
+        </Routes>
+      </div>
       
     </BrowserRouter>
   );
