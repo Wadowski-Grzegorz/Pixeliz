@@ -1,8 +1,9 @@
 package com.example.backend.controller;
 
 import com.example.backend.dto.AddUserToDrawingDTO;
+import com.example.backend.dto.UserRoleDTO;
 import com.example.backend.model.Drawing;
-import com.example.backend.model.User;
+import com.example.backend.model.UserDrawingRole;
 import com.example.backend.service.DrawingService;
 import com.example.backend.dto.DrawingDTO;
 import org.springframework.http.HttpStatus;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -64,36 +66,43 @@ public class DrawingController {
         }
     }
 
+
+
     @PostMapping("/{id}/user")
     public ResponseEntity<?> addUserToDrawing(@PathVariable Long id, @RequestBody AddUserToDrawingDTO AddUserToDrawingDTO){
         try{
             Long roleId = AddUserToDrawingDTO.getRoleId();
             String username = AddUserToDrawingDTO.getUsername();
-            drawingService.addUserToDrawing(id, roleId, username);
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            UserDrawingRole relation = drawingService.addUserToDrawing(id, roleId, username);
+            return new ResponseEntity<>(relation, HttpStatus.CREATED);
         } catch(NoSuchElementException e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @GetMapping("/{id}/user")
-    public ResponseEntity<List<User>> getUsersFromDrawing(@PathVariable Long id){
-        return new ResponseEntity<>(drawingService.getDrawingUsers(), HttpStatus.OK);
+    public ResponseEntity<List<UserRoleDTO>> getUsersFromDrawing(@PathVariable Long id){
+        return new ResponseEntity<>(drawingService.getDrawingUsers(id), HttpStatus.OK);
     }
 
     @GetMapping("/{id}/user/{userId}")
-    public ResponseEntity<User> getUserFromDrawing(@PathVariable Long id, @PathVariable Long userId){
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<UserRoleDTO> getUserFromDrawing(@PathVariable Long id, @PathVariable Long userId){
+        return new ResponseEntity<>(drawingService.getDrawingUser(id, userId), HttpStatus.OK);
     }
 
     @PutMapping("{id}/user/{userId}")
-    public ResponseEntity<?> updateUserRole(@PathVariable Long id, @PathVariable Long userId){
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<?> updateUserRole(@PathVariable Long id,
+                                            @PathVariable Long userId,
+                                            @RequestBody Map<String, Long> requestBody){
+        Long roleId = requestBody.get("roleId");
+        return new ResponseEntity<>(drawingService.updateUserDrawingRole(roleId, userId, id), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}/user/{userId}")
     public ResponseEntity<?> deleteUserFromDrawing(@PathVariable Long id, @PathVariable Long userId){
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        drawingService.deleteUserDrawingRole(id, userId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
 
 }

@@ -1,5 +1,6 @@
 package com.example.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,6 +24,7 @@ public class Drawing {
     private int size_x;
     private int size_y;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "drawing")
     Set<UserDrawingRole> userDrawingRoles;
 }

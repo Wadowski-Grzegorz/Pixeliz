@@ -10,4 +10,6 @@ public class DrawingDTO {
     private String name;
     private int size_x;
     private int size_y;
+
+    private Long authorId;
 }

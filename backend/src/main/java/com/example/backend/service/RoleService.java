@@ -25,4 +25,10 @@ public class RoleService {
                 .findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Role not found"));
     }
+
+    public Role getRole(String name){
+        return roleRepository
+                .findByName(name)
+                .orElseThrow(() -> new NoSuchElementException("Role not found"));
+    }
 }

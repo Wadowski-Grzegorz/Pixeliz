@@ -1,5 +1,6 @@
 package com.example.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,6 +36,7 @@ public class Role {
     @Column(columnDefinition="boolean default false")
     private boolean delete;
 
+    @JsonIgnore
     @OneToMany(mappedBy="role")
     private Set<UserDrawingRole> userDrawingRoles;
 }
