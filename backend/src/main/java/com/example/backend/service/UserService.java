@@ -2,13 +2,13 @@ package com.example.backend.service;
 
 import com.example.backend.dto.LoginDTO;
 import com.example.backend.dto.UserDTO;
+import com.example.backend.exception.UserNotFoundException;
 import com.example.backend.model.User;
 import com.example.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
+
 
 @Service
 public class UserService {
@@ -21,7 +21,7 @@ public class UserService {
     public User getUser(Long id){
         return userRepository
                 .findById(id)
-                .orElseThrow(() -> new NoSuchElementException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException(Map.of("id", id)));
     }
 
     public User getUser(String username){
@@ -31,6 +31,7 @@ public class UserService {
     }
 
     public User getUser(LoginDTO loginDTO){
+        // can be login by (login, password) or (email, password)
         String login = loginDTO.getLogin();
         String email = loginDTO.getEmail();
         String password = loginDTO.getPassword();
@@ -49,7 +50,6 @@ public class UserService {
         return user.orElseThrow(() -> new NoSuchElementException("User not found"));
     }
 
-    // this will go to login
     public User createUser(UserDTO userDTO){
         return userRepository.save(DTOtoUser(userDTO));
     }
@@ -64,6 +64,7 @@ public class UserService {
     }
 
     public User updateUser(Long id, UserDTO userDTO){
+        // update what is present
         User user = getUser(id);
         if(userDTO.getUsername() != null && !userDTO.getUsername().isBlank()){
             user.setUsername(userDTO.getUsername());

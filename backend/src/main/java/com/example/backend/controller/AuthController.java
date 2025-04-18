@@ -3,8 +3,8 @@ package com.example.backend.controller;
 import com.example.backend.dto.LoginDTO;
 import com.example.backend.dto.UserDTO;
 import com.example.backend.model.User;
-import com.example.backend.repository.UserRepository;
 import com.example.backend.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,13 +23,13 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody UserDTO userDTO){
+    public ResponseEntity<User> register(@RequestBody @Valid UserDTO userDTO){
         User user = userService.createUser(userDTO);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody LoginDTO loginDTO){
+    public ResponseEntity<User> login(@RequestBody @Valid LoginDTO loginDTO){
         try{
             User user = userService.getUser(loginDTO);
             return new ResponseEntity<>(user, HttpStatus.OK);

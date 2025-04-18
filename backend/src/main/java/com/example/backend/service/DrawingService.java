@@ -62,8 +62,12 @@ public class DrawingService {
 
     public Drawing updateDrawing(Long id, DrawingDTO drawingUpdate) {
         Drawing drawing = getDrawing(id);
-        drawing.setName(drawingUpdate.getName());
-        drawing.setGrid(drawingUpdate.getGrid());
+        if(drawingUpdate.getName() != null){
+            drawing.setName(drawingUpdate.getName());
+        }
+        if(drawingUpdate.getGrid() != null && !drawingUpdate.getGrid().isBlank()){
+            drawing.setGrid(drawingUpdate.getGrid());
+        }
         return drawingRepository.save(drawing);
     }
 

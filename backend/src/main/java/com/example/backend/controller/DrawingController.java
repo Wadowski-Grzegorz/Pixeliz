@@ -6,8 +6,10 @@ import com.example.backend.model.Drawing;
 import com.example.backend.model.UserDrawingRole;
 import com.example.backend.service.DrawingService;
 import com.example.backend.dto.DrawingDTO;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,7 +28,7 @@ public class DrawingController {
     }
 
     @PostMapping()
-    public ResponseEntity<Drawing> createDrawing(@RequestBody DrawingDTO drawingDTO) {
+    public ResponseEntity<Drawing> createDrawing(@RequestBody @Valid DrawingDTO drawingDTO) {
         Drawing drawing = drawingService.createDrawing(drawingDTO);
         return new ResponseEntity<>(drawing, HttpStatus.CREATED);
     }
@@ -47,7 +49,9 @@ public class DrawingController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Drawing> putDrawing(@PathVariable Long id, @RequestBody DrawingDTO drawingUpdate) {
+    public ResponseEntity<Drawing> putDrawing(
+            @PathVariable Long id,
+            @RequestBody @Validated(DrawingDTO.Update.class) DrawingDTO drawingUpdate) {
         try{
             Drawing drawing = drawingService.updateDrawing(id, drawingUpdate);
             return new ResponseEntity<>(drawing, HttpStatus.OK);
@@ -69,7 +73,8 @@ public class DrawingController {
 
 
     @PostMapping("/{id}/user")
-    public ResponseEntity<?> addUserToDrawing(@PathVariable Long id, @RequestBody AddUserToDrawingDTO AddUserToDrawingDTO){
+    public ResponseEntity<?> addUserToDrawing(@PathVariable Long id,
+                                              @RequestBody @Valid AddUserToDrawingDTO AddUserToDrawingDTO){
         try{
             Long roleId = AddUserToDrawingDTO.getRoleId();
             String username = AddUserToDrawingDTO.getUsername();

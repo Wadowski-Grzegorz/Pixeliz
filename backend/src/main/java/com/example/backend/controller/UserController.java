@@ -3,8 +3,10 @@ package com.example.backend.controller;
 import com.example.backend.dto.UserDTO;
 import com.example.backend.model.User;
 import com.example.backend.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,7 +39,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody UserDTO userDTO){
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody @Validated(UserDTO.Update.class) UserDTO userDTO){
         try{
             User user = userService.updateUser(id, userDTO);
             return new ResponseEntity<>(user, HttpStatus.OK);
