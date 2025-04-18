@@ -2,6 +2,7 @@ package com.example.backend.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.groups.Default;
 import lombok.*;
 import jakarta.validation.constraints.NotBlank;
 
@@ -12,7 +13,7 @@ import jakarta.validation.constraints.NotBlank;
 @NoArgsConstructor
 @Builder
 public class UserDTO {
-    @NotNull()
+    @NotNull
     @NotBlank
     private String username;
 
@@ -22,7 +23,7 @@ public class UserDTO {
 
     @NotNull
     @NotBlank
-    @Email(groups = Update.class)
+    @Email(groups = {Default.class, DrawingDTO.Update.class})
     private String email;
 
     @NotNull

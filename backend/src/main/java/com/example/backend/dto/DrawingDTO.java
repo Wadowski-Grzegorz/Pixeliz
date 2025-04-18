@@ -3,17 +3,18 @@ package com.example.backend.dto;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.groups.Default;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class DrawingDTO {
-    @NotNull(groups=Update.class)
-    @NotBlank(groups=Update.class)
+    @NotNull(groups = {Default.class, Update.class})
+    @NotBlank(groups = {Default.class, Update.class})
     private String grid;
 
-    @NotNull(groups=Update.class)
+    @NotNull(groups = {Default.class, Update.class})
     private String name;
 
     @NotNull
