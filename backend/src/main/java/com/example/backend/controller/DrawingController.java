@@ -35,12 +35,8 @@ public class DrawingController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Drawing> getDrawing(@PathVariable Long id) {
-        try{
-            Drawing drawing = drawingService.getDrawing(id);
-            return new ResponseEntity<>(drawing, HttpStatus.OK);
-        } catch(NoSuchElementException e){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Drawing drawing = drawingService.getDrawing(id);
+        return new ResponseEntity<>(drawing, HttpStatus.OK);
     }
 
     @GetMapping()
@@ -52,22 +48,14 @@ public class DrawingController {
     public ResponseEntity<Drawing> putDrawing(
             @PathVariable Long id,
             @RequestBody @Validated(DrawingDTO.Update.class) DrawingDTO drawingUpdate) {
-        try{
-            Drawing drawing = drawingService.updateDrawing(id, drawingUpdate);
-            return new ResponseEntity<>(drawing, HttpStatus.OK);
-        } catch(NoSuchElementException e){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Drawing drawing = drawingService.updateDrawing(id, drawingUpdate);
+        return new ResponseEntity<>(drawing, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteDrawing(@PathVariable Long id){
-        try{
-            drawingService.deleteDrawing(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }catch(NoSuchElementException e){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        drawingService.deleteDrawing(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 
@@ -75,14 +63,10 @@ public class DrawingController {
     @PostMapping("/{id}/user")
     public ResponseEntity<?> addUserToDrawing(@PathVariable Long id,
                                               @RequestBody @Valid AddUserToDrawingDTO AddUserToDrawingDTO){
-        try{
-            Long roleId = AddUserToDrawingDTO.getRoleId();
-            String username = AddUserToDrawingDTO.getUsername();
-            UserDrawingRole relation = drawingService.addUserToDrawing(id, roleId, username);
-            return new ResponseEntity<>(relation, HttpStatus.CREATED);
-        } catch(NoSuchElementException e){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Long roleId = AddUserToDrawingDTO.getRoleId();
+        String username = AddUserToDrawingDTO.getUsername();
+        UserDrawingRole relation = drawingService.addUserToDrawing(id, roleId, username);
+        return new ResponseEntity<>(relation, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}/user")

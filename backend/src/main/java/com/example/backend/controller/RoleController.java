@@ -28,12 +28,8 @@ public class RoleController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Role> getRole(@PathVariable Long id){
-        try{
-            Role role = roleService.getRole(id);
-            return new ResponseEntity<>(role, HttpStatus.OK);
-        } catch(NoSuchElementException e){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Role role = roleService.getRole(id);
+        return new ResponseEntity<>(role, HttpStatus.OK);
     }
 
 }

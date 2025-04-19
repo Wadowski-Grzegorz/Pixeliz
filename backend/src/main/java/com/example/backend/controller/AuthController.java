@@ -30,14 +30,8 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody @Valid LoginDTO loginDTO){
-        try{
-            User user = userService.getUser(loginDTO);
-            return new ResponseEntity<>(user, HttpStatus.OK);
-        } catch(IllegalArgumentException e){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch(NoSuchElementException e){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        User user = userService.getUser(loginDTO);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PostMapping("logout")

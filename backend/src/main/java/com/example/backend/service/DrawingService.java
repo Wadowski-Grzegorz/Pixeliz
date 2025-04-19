@@ -2,6 +2,7 @@ package com.example.backend.service;
 
 import com.example.backend.dto.DrawingDTO;
 import com.example.backend.dto.UserRoleDTO;
+import com.example.backend.exception.DrawingNotFoundException;
 import com.example.backend.model.Drawing;
 import com.example.backend.model.Role;
 import com.example.backend.model.User;
@@ -10,6 +11,7 @@ import com.example.backend.repository.DrawingRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @Service
@@ -37,13 +39,10 @@ public class DrawingService {
         drawing.setSize_x(drawingDTO.getSize_x());
         drawing.setSize_y(drawingDTO.getSize_y());
 
-        // if userid provided
+        // if drawing have author
         if(drawingDTO.getAuthorId() > 0){
-            // get user by id from drawingDTO
             User user = userService.getUser(drawingDTO.getAuthorId());
-            // get author role
             Role role = roleService.getRole("owner");
-            // create userdrawingrole
             UserDrawingRole userDrawingRole =
                     userDrawingRoleService.createUserDrawingRole(user, drawing, role);
         }
@@ -53,7 +52,7 @@ public class DrawingService {
     public Drawing getDrawing(Long id) {
         return drawingRepository
                 .findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Drawing not found"));
+                .orElseThrow(() -> new DrawingNotFoundException(Map.of("id", id)));
     }
 
     public List<Drawing> getDrawings(){

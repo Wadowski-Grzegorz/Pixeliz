@@ -2,6 +2,7 @@ package com.example.backend.service;
 
 import com.example.backend.dto.LoginDTO;
 import com.example.backend.dto.UserDTO;
+import com.example.backend.exception.UserAlreadyExistsException;
 import com.example.backend.exception.UserNotFoundException;
 import com.example.backend.model.User;
 import com.example.backend.repository.UserRepository;
@@ -27,7 +28,7 @@ public class UserService {
     public User getUser(String username){
         return userRepository
                 .findByUsername(username)
-                .orElseThrow(() -> new NoSuchElementException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException(Map.of("username", username)));
     }
 
     public User getUser(LoginDTO loginDTO){
@@ -47,11 +48,13 @@ public class UserService {
             user = userRepository.findByLoginAndPassword(login, password);
         }
 
-        return user.orElseThrow(() -> new NoSuchElementException("User not found"));
+        return user.orElseThrow(UserNotFoundException::new);
     }
 
     public User createUser(UserDTO userDTO){
-        return userRepository.save(DTOtoUser(userDTO));
+        User user = DTOtoUser(userDTO);
+        verifyUserCredentials(user);
+        return userRepository.save(user);
     }
 
     public List<User> getUsers(){
@@ -66,20 +69,63 @@ public class UserService {
     public User updateUser(Long id, UserDTO userDTO){
         // update what is present
         User user = getUser(id);
-        if(userDTO.getUsername() != null && !userDTO.getUsername().isBlank()){
-            user.setUsername(userDTO.getUsername());
-        }
-        if (userDTO.getLogin() != null && !userDTO.getLogin().isBlank()) {
-            user.setLogin(userDTO.getLogin());
-        }
-        if (userDTO.getPassword() != null && !userDTO.getPassword().isBlank()) {
-            user.setPassword(userDTO.getPassword());
-        }
-        if (userDTO.getEmail() != null && !userDTO.getEmail().isBlank()) {
-            user.setEmail(userDTO.getEmail());
-        }
+
+        updateIfPresent(
+                userDTO.getUsername(),
+                "username",
+                v -> userRepository.findByUsername(v).isPresent(),
+                user::setUsername);
+
+        updateIfPresent(
+                userDTO.getLogin(),
+                "login",
+                v -> userRepository.findByLogin(v).isPresent(),
+                user::setLogin);
+
+        updateIfPresent(
+                userDTO.getEmail(),
+                "Email",
+                v -> userRepository.findByEmail(v).isPresent(),
+                user::setEmail);
+
+        updateIfPresent(
+                userDTO.getPassword(),
+                "password",
+                v -> userRepository.findByPassword(v).isPresent(),
+                user::setPassword);
 
         return userRepository.save(user);
+    }
+
+    void verifyUserCredentials(User user){
+        if(userRepository.findByEmail(user.getEmail()).isPresent()){
+            throw new UserAlreadyExistsException("email");
+        }
+        if(userRepository.findByUsername(user.getUsername()).isPresent()){
+            throw new UserAlreadyExistsException("username");
+        }
+        if(userRepository.findByLogin(user.getLogin()).isPresent()){
+            throw new UserAlreadyExistsException("login");
+        }
+        if(userRepository.findByPassword(user.getPassword()).isPresent()){
+            throw new UserAlreadyExistsException("password");
+        }
+    }
+
+    interface Checker{
+        boolean check(String value);
+    }
+    interface Updater{
+        void update(String value);
+    }
+
+    void updateIfPresent(String value, String type, Checker checker, Updater updater){
+        if(value != null && !value.isBlank()){
+            if(checker.check(value)){
+                throw new UserAlreadyExistsException(type);
+            }
+            updater.update(value);
+        }
     }
 
     public User DTOtoUser(UserDTO userDTO){

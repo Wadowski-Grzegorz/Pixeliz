@@ -1,6 +1,5 @@
 package com.example.backend.service;
 
-import com.example.backend.dto.AddUserToDrawingDTO;
 import com.example.backend.dto.UserRoleDTO;
 import com.example.backend.model.*;
 import com.example.backend.repository.UserDrawingRoleRepository;
