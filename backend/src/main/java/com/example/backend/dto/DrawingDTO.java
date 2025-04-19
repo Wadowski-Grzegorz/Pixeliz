@@ -17,13 +17,9 @@ public class DrawingDTO {
     @NotNull(groups = {Default.class, Update.class})
     private String name;
 
-    @NotNull
-    @NotBlank
     @Min(1)
     private int size_x;
 
-    @NotNull
-    @NotBlank
     @Min(1)
     private int size_y;
 

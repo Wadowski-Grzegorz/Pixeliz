@@ -9,8 +9,10 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Drawing {
 
     @Id
@@ -27,4 +29,6 @@ public class Drawing {
     @JsonIgnore
     @OneToMany(mappedBy = "drawing")
     Set<UserDrawingRole> userDrawingRoles;
+
+
 }
