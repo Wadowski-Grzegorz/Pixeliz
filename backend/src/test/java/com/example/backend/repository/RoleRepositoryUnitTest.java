@@ -1,7 +1,6 @@
-package com.example.backend.repositoryTest;
+package com.example.backend.repository;
 
 import com.example.backend.model.Role;
-import com.example.backend.repository.RoleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
-public class RoleRepositoryTest {
+public class RoleRepositoryUnitTest {
     @Autowired
     private RoleRepository roleRepository;
 

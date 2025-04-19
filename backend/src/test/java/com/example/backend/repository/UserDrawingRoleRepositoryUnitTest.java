@@ -1,13 +1,9 @@
-package com.example.backend.repositoryTest;
+package com.example.backend.repository;
 
 import com.example.backend.model.Drawing;
 import com.example.backend.model.Role;
 import com.example.backend.model.User;
 import com.example.backend.model.UserDrawingRole;
-import com.example.backend.repository.DrawingRepository;
-import com.example.backend.repository.RoleRepository;
-import com.example.backend.repository.UserDrawingRoleRepository;
-import com.example.backend.repository.UserRepository;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +15,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
-public class UserDrawingRoleRepositoryTest {
+public class UserDrawingRoleRepositoryUnitTest {
 
     @Autowired
     private UserDrawingRoleRepository userDrawingRoleRepository;

@@ -1,11 +1,10 @@
-package com.example.backend.repositoryTest;
+package com.example.backend.repository;
 
-import com.example.backend.repository.DrawingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class DrawingRepositoryTest {
+public class DrawingRepositoryUnitTest {
     @Autowired
     private DrawingRepository drawingRepository;
 
