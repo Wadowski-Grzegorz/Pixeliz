@@ -15,11 +15,4 @@ public interface UserDrawingRoleRepository extends JpaRepository<UserDrawingRole
     @Query("SELECT udr.user, udr.role FROM UserDrawingRole udr " +
             "WHERE udr.drawing.id = :drawingId")
     List<Object[]> findUsersAndRoles(@Param("drawingId") Long drawingId);
-
-//    @Query("SELECT udr.user, udr.role FROM UserDrawingRole udr " +
-//            "WHERE udr.drawing.id = :drawingId AND udr.user.id = :userId")
-//    Optional<Object[]> findUserAndRole(@Param("drawingId") Long drawingId,
-//                                       @Param("userId") Long userId);
-
-
 }
