@@ -1,11 +1,13 @@
 package com.example.backend.service;
 
 import com.example.backend.dto.UserRoleDTO;
+import com.example.backend.exception.RelationNotFoundException;
 import com.example.backend.model.*;
 import com.example.backend.repository.UserDrawingRoleRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
@@ -39,7 +41,7 @@ public class UserDrawingRoleService {
     public UserDrawingRole getUserDrawingRole(Long drawingId, Long userId) {
         UserDrawingKey key = new UserDrawingKey(drawingId, userId);
         return userDrawingRoleRepository.findById(key)
-                .orElseThrow(() -> new NoSuchElementException("UserDrawingRole not found"));
+                .orElseThrow(() -> new RelationNotFoundException(Map.of("drawingId", drawingId, "userId", userId)));
     }
 
     public UserRoleDTO getUserFromDrawing(Long drawingId, Long userId){
