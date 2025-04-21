@@ -39,7 +39,7 @@ public class DrawingService {
         drawing.setSize_y(drawingDTO.getSize_y());
 
         // if drawing have author
-        if(drawingDTO.getAuthorId() > 0){
+        if(drawingDTO.getAuthorId() != null && drawingDTO.getAuthorId() > 0){
             User user = userService.getUser(drawingDTO.getAuthorId());
             Role role = roleService.getRole("owner");
             UserDrawingRole userDrawingRole =

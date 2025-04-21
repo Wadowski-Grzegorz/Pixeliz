@@ -25,7 +25,6 @@ public class DrawingDTO {
     @Min(1)
     private int size_y;
 
-    @NotNull
     @Min(1)
     private Long authorId;
 
