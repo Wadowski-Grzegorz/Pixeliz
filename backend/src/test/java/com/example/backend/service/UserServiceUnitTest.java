@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -38,7 +39,7 @@ class UserServiceUnitTest {
         user = User
                 .builder()
                 .id(1L)
-                .username("Jamal")
+                .name("Jamal")
                 .login("Jamal445")
                 .password("StrongPassword")
                 .email("jamal@email.com")
@@ -75,32 +76,32 @@ class UserServiceUnitTest {
     }
 
     @Test
-    void getUser_UsernameExists_ReturnsUser() {
+    void getUser_NameExists_ReturnsUser() {
         // precondition
-        String username = "Jamal";
-        given(userRepository.findByUsername(username)).willReturn(Optional.of(user));
+        String name = "Jamal";
+        given(userRepository.findByName(name)).willReturn(Optional.of(user));
 
         // action
-        User returnedUser = userService.getUser(username);
+        User returnedUser = userService.getUserByName(name);
 
         // verify
         assertThat(returnedUser).isEqualTo(user);
     }
 
     @Test
-    void getUser_UsernameDoesNotExist_ThrowsUserNotFoundException() {
+    void getUser_NameDoesNotExist_ThrowsUserNotFoundException() {
         // precondition
-        String username = "not real username";
-        given(userRepository.findByUsername(username)).willReturn(Optional.empty());
+        String name = "not real name";
+        given(userRepository.findByName(name)).willReturn(Optional.empty());
 
         // action
-        UserNotFoundException ex = assertThrows(UserNotFoundException.class, () -> userService.getUser(username));
+        UserNotFoundException ex = assertThrows(UserNotFoundException.class, () -> userService.getUserByName(name));
 
         // verify
         assertThat(ex.getCriteria())
                 .isNotNull()
                 .isNotEmpty()
-                .containsEntry("username", username);
+                .containsEntry("name", name);
     }
 
     @Test
@@ -119,7 +120,7 @@ class UserServiceUnitTest {
         User user2 = User
                 .builder()
                 .id(2L)
-                .username("Ahmed")
+                .name("Ahmed")
                 .login("Ahmed445")
                 .password("ImperialPassword")
                 .email("Ahmed@email.com")
@@ -170,24 +171,24 @@ class UserServiceUnitTest {
         // precondition
         Long id = 1L;
         UserDTO uDto = new UserDTO(
-                "newUsername",
+                "newName",
                 "newLogin",
                 "newEmail@email.com",
                 "newPassword"
         );
         given(userRepository.findById(id)).willReturn(Optional.of(user));
-        given(userRepository.findByUsername("newUsername")).willReturn(Optional.empty());
+        given(userRepository.findByName("newName")).willReturn(Optional.empty());
         given(userRepository.findByLogin("newLogin")).willReturn(Optional.empty());
         given(userRepository.findByEmail("newEmail@email.com")).willReturn(Optional.empty());
         given(userRepository.findByPassword("newPassword")).willReturn(Optional.empty());
-        given(userRepository.save(user)).willReturn(user);
+        given(userRepository.save(any(User.class))).willReturn(user);
 
         // action
         User returnedUser = userService.updateUser(id, uDto);
 
         // verify
         assertThat(returnedUser.getId()).isEqualTo(id);
-        assertThat(returnedUser.getUsername()).isEqualTo("newUsername");
+        assertThat(returnedUser.getName()).isEqualTo("newName");
         assertThat(returnedUser.getLogin()).isEqualTo("newLogin");
         assertThat(returnedUser.getEmail()).isEqualTo("newEmail@email.com");
         assertThat(returnedUser.getPassword()).isEqualTo("newPassword");

@@ -1,11 +1,16 @@
 package com.example.backend.service;
 
+import com.example.backend.dto.AuthResponseDTO;
 import com.example.backend.dto.LoginDTO;
 import com.example.backend.dto.UserDTO;
 import com.example.backend.exception.UserAlreadyExistsException;
 import com.example.backend.exception.UserNotFoundException;
+import com.example.backend.model.SecurityRole;
 import com.example.backend.model.User;
 import com.example.backend.repository.UserRepository;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -14,9 +19,15 @@ import java.util.*;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
+        this.authenticationManager = authenticationManager;
     }
 
     public User getUser(Long id){
@@ -25,36 +36,65 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException(Map.of("id", id)));
     }
 
-    public User getUser(String username){
+    public User getUserByEmail(String email){
         return userRepository
-                .findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException(Map.of("username", username)));
+                .findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException(Map.of("email", email)));
     }
 
-    public User getUser(LoginDTO loginDTO){
-        // can be login by (login, password) or (email, password)
-        String login = loginDTO.getLogin();
-        String email = loginDTO.getEmail();
-        String password = loginDTO.getPassword();
-
-        if(password.isBlank() || (email.isBlank() && login.isBlank())){
-            throw new IllegalArgumentException("Blank credentials");
-        }
-
-        Optional<User> user = Optional.empty();
-        if(!email.isBlank()){
-            user = userRepository.findByEmailAndPassword(email, password);
-        } else if(!login.isBlank()){
-            user = userRepository.findByLoginAndPassword(login, password);
-        }
-
-        return user.orElseThrow(UserNotFoundException::new);
+    public User getUserByName(String name){
+        return userRepository
+                .findByName(name)
+                .orElseThrow(() -> new UserNotFoundException(Map.of("name", name)));
     }
 
-    public User createUser(UserDTO userDTO){
+    // check if del it
+//    public User getUser(LoginDTO loginDTO){
+//        // can be login by (login, password) or (email, password)
+//        String login = loginDTO.getLogin();
+//        String email = loginDTO.getEmail();
+//        String password = loginDTO.getPassword();
+//
+//        if(password.isBlank() || (email.isBlank() && login.isBlank())){
+//            throw new IllegalArgumentException("Blank credentials");
+//        }
+//
+//        Optional<User> user = Optional.empty();
+//        if(!email.isBlank()){
+//            user = userRepository.findByEmailAndPassword(email, password);
+//        } else if(!login.isBlank()){
+//            user = userRepository.findByLoginAndPassword(login, password);
+//        }
+//
+//        return user.orElseThrow(UserNotFoundException::new);
+//    }
+
+    public AuthResponseDTO createUser(UserDTO userDTO){
         User user = DTOtoUser(userDTO);
+        user.setSecurityRole(SecurityRole.USER);
         verifyUserCredentials(user);
-        return userRepository.save(user);
+        userRepository.save(user);
+        var jwtToken = jwtService.generateToken(user);
+        return AuthResponseDTO
+                .builder()
+                .token(jwtToken)
+                .build();
+    }
+
+    public AuthResponseDTO login(LoginDTO loginDTO){
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginDTO.getEmail(),
+                        loginDTO.getPassword()
+                )
+        );
+        var user = userRepository.findByEmail(loginDTO.getEmail())
+                .orElseThrow(() -> new UserNotFoundException(Map.of("emailLogin", loginDTO.getEmail())));
+        var jwtToken = jwtService.generateToken(user);
+        return AuthResponseDTO
+                .builder()
+                .token(jwtToken)
+                .build();
     }
 
     public List<User> getUsers(){
@@ -71,10 +111,10 @@ public class UserService {
         User user = getUser(id);
 
         updateIfPresent(
-                userDTO.getUsername(),
-                "username",
-                v -> userRepository.findByUsername(v).isPresent(),
-                user::setUsername);
+                userDTO.getName(),
+                "name",
+                v -> userRepository.findByName(v).isPresent(),
+                user::setName);
 
         updateIfPresent(
                 userDTO.getLogin(),
@@ -88,11 +128,14 @@ public class UserService {
                 v -> userRepository.findByEmail(v).isPresent(),
                 user::setEmail);
 
-        updateIfPresent(
-                userDTO.getPassword(),
-                "password",
-                v -> userRepository.findByPassword(v).isPresent(),
-                user::setPassword);
+//        updateIfPresent(
+//                userDTO.getPassword(),
+//                "password",
+//                v -> userRepository.findByPassword(v).isPresent(),
+//                user::setPassword);
+        if(userDTO.getPassword() != null && !userDTO.getPassword().isBlank()){
+            user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        }
 
         return userRepository.save(user);
     }
@@ -101,14 +144,11 @@ public class UserService {
         if(userRepository.findByEmail(user.getEmail()).isPresent()){
             throw new UserAlreadyExistsException("email");
         }
-        if(userRepository.findByUsername(user.getUsername()).isPresent()){
-            throw new UserAlreadyExistsException("username");
+        if(userRepository.findByName(user.getName()).isPresent()){
+            throw new UserAlreadyExistsException("name");
         }
         if(userRepository.findByLogin(user.getLogin()).isPresent()){
             throw new UserAlreadyExistsException("login");
-        }
-        if(userRepository.findByPassword(user.getPassword()).isPresent()){
-            throw new UserAlreadyExistsException("password");
         }
     }
 
@@ -130,16 +170,16 @@ public class UserService {
 
     public User DTOtoUser(UserDTO userDTO){
         return User.builder()
-                .username(userDTO.getUsername())
+                .name(userDTO.getName())
                 .login(userDTO.getLogin())
-                .password(userDTO.getPassword())
+                .password(passwordEncoder.encode(userDTO.getPassword()))
                 .email(userDTO.getEmail())
                 .build();
     }
 
     public UserDTO UserToDTO(User user){
         return UserDTO.builder()
-                .username(user.getUsername())
+                .name(user.getName())
                 .login(user.getLogin())
                 .email(user.getEmail())
                 .build();

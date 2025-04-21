@@ -1,5 +1,6 @@
 package com.example.backend.controller;
 
+import com.example.backend.dto.AuthResponseDTO;
 import com.example.backend.dto.LoginDTO;
 import com.example.backend.dto.UserDTO;
 import com.example.backend.model.User;
@@ -8,8 +9,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.NoSuchElementException;
 
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = "http://localhost:5173")
@@ -23,15 +22,15 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody @Valid UserDTO userDTO){
-        User user = userService.createUser(userDTO);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
+    public ResponseEntity<AuthResponseDTO> register(@RequestBody @Valid UserDTO userDTO){
+        AuthResponseDTO response = userService.createUser(userDTO);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody @Valid LoginDTO loginDTO){
-        User user = userService.getUser(loginDTO);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+    public ResponseEntity<AuthResponseDTO> login(@RequestBody @Valid LoginDTO loginDTO){
+        AuthResponseDTO response = userService.login(loginDTO);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("logout")

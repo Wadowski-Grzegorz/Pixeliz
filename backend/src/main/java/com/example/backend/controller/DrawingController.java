@@ -64,8 +64,8 @@ public class DrawingController {
     public ResponseEntity<?> addUserToDrawing(@PathVariable Long id,
                                               @RequestBody @Valid AddUserToDrawingDTO AddUserToDrawingDTO){
         Long roleId = AddUserToDrawingDTO.getRoleId();
-        String username = AddUserToDrawingDTO.getUsername();
-        UserDrawingRole relation = drawingService.addUserToDrawing(id, roleId, username);
+        String name = AddUserToDrawingDTO.getName();
+        UserDrawingRole relation = drawingService.addUserToDrawing(id, roleId, name);
         return new ResponseEntity<>(relation, HttpStatus.CREATED);
     }
 

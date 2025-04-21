@@ -37,7 +37,7 @@ public class UserDrawingRoleRepositoryUnitTest {
         userRepository.deleteAll();
         User user = User
                 .builder()
-                .username("Jamal")
+                .name("Jamal")
                 .login("Jamal445")
                 .password("StrongPassword")
                 .email("jamal@email.com")
@@ -73,7 +73,7 @@ public class UserDrawingRoleRepositoryUnitTest {
         assertEquals(1, expected.size());
         User savedUser = (User) expected.get(0)[0];
         Role savedRole = (Role) expected.get(0)[1];
-        assertEquals("Jamal", savedUser.getUsername());
+        assertEquals("Jamal", savedUser.getName());
         assertEquals("admin", savedRole.getName());
     }
 }

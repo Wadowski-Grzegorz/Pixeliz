@@ -46,7 +46,7 @@ class UserDrawingRoleServiceTest {
         user = User
                 .builder()
                 .id(1L)
-                .username("Jamal")
+                .name("Jamal")
                 .login("Jamal445")
                 .password("StrongPassword")
                 .email("jamal@email.com")

@@ -15,5 +15,5 @@ public class AddUserToDrawingDTO {
 
     @NotNull
     @NotBlank
-    private String username;
+    private String name;
 }

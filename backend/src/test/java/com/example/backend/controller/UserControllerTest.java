@@ -46,7 +46,7 @@ class UserControllerTest {
         user = User
                 .builder()
                 .id(1L)
-                .username("Jamal")
+                .name("Jamal")
                 .login("Jamal445")
                 .password("StrongPassword")
                 .email("jamal@email.com")
@@ -86,17 +86,16 @@ class UserControllerTest {
     void updateUser_IdExists_ReturnsUpdatedUser() throws Exception {
         // precondition
         UserDTO uDto = new UserDTO(
-                "newUsername",
+                "newName",
                 "newLogin",
                 "newEmail@email.com",
                 "newPassword"
         );
-        System.out.println("Request payload: " + objectMapper.writeValueAsString(uDto));
 
         User updatedUser = User
                 .builder()
                 .id(1L)
-                .username(uDto.getUsername())
+                .name(uDto.getName())
                 .login(uDto.getLogin())
                 .password(uDto.getPassword())
                 .email(uDto.getEmail())

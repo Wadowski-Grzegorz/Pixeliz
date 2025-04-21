@@ -22,7 +22,7 @@ public class UserRepositoryUnitTest {
         userRepository.deleteAll();
         User user = User
                 .builder()
-                .username("Jamal")
+                .name("Jamal")
                 .login("Jamal445")
                 .password("StrongPassword")
                 .email("jamal@email.com")
@@ -31,12 +31,12 @@ public class UserRepositoryUnitTest {
     }
 
     @Test
-    public void findByUsername_NameExists_User(){
-        String username = "Jamal";
-        Optional<User> expected = userRepository.findByUsername(username);
+    public void findByName_NameExists_User(){
+        String name = "Jamal";
+        Optional<User> expected = userRepository.findByName(name);
 
         assertThat(expected.isPresent()).isTrue();
-        assertEquals(username, expected.get().getUsername());
+        assertEquals(name, expected.get().getName());
     }
 
     @Test

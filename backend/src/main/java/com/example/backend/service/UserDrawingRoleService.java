@@ -33,7 +33,7 @@ public class UserDrawingRoleService {
                 .map(row ->{
                     User user = (User) row[0];
                     Role role = (Role) row[1];
-                    return new UserRoleDTO(user.getId(), user.getUsername(), role);
+                    return new UserRoleDTO(user.getId(), user.getName(), role);
                 })
                 .collect(Collectors.toList());
     }
@@ -67,7 +67,7 @@ public class UserDrawingRoleService {
     public UserRoleDTO toUserRoleDTO(UserDrawingRole udr){
         User user = udr.getUser();
         Role role = udr.getRole();
-        return new UserRoleDTO(user.getId(), user.getUsername(), role);
+        return new UserRoleDTO(user.getId(), user.getName(), role);
     }
 
 

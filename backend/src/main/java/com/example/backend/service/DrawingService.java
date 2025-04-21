@@ -74,8 +74,8 @@ public class DrawingService {
         drawingRepository.deleteById(id);
     }
 
-    public UserDrawingRole addUserToDrawing(Long id, Long roleId, String username) {
-        User user = userService.getUser(username);
+    public UserDrawingRole addUserToDrawing(Long id, Long roleId, String name) {
+        User user = userService.getUserByName(name);
         Drawing drawing = getDrawing(id);
         Role role = roleService.getRole(roleId);
 

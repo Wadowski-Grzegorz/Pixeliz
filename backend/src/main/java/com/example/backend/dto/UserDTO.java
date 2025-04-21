@@ -15,7 +15,7 @@ import jakarta.validation.constraints.NotBlank;
 public class UserDTO {
     @NotNull
     @NotBlank
-    private String username;
+    private String name;
 
     @NotNull
     @NotBlank
