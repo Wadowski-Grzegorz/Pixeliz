@@ -5,6 +5,7 @@ import com.example.backend.dto.UserDTO;
 import com.example.backend.model.Drawing;
 import com.example.backend.model.User;
 import com.example.backend.service.DrawingService;
+import com.example.backend.service.JwtService;
 import com.example.backend.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -31,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = {DrawingController.class})
 @ExtendWith(MockitoExtension.class)
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 class DrawingControllerTest {
 
     @Autowired
@@ -42,6 +44,9 @@ class DrawingControllerTest {
 
     @MockitoBean
     private DrawingService drawingService;
+
+    @MockitoBean
+    private JwtService jwtService;
 
     private Drawing drawing;
 

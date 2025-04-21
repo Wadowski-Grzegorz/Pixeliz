@@ -1,7 +1,9 @@
 package com.example.backend.controller;
 
 import com.example.backend.dto.UserDTO;
+import com.example.backend.model.SecurityRole;
 import com.example.backend.model.User;
+import com.example.backend.service.JwtService;
 import com.example.backend.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = {UserController.class})
 @ExtendWith(MockitoExtension.class)
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 class UserControllerTest {
 
     @Autowired
@@ -38,6 +40,9 @@ class UserControllerTest {
 
     @MockitoBean
     private UserService userService;
+
+    @MockitoBean
+    private JwtService jwtService;
 
     private User user;
 
@@ -50,6 +55,7 @@ class UserControllerTest {
                 .login("Jamal445")
                 .password("StrongPassword")
                 .email("jamal@email.com")
+                .securityRole(SecurityRole.USER)
                 .build();
     }
 
@@ -70,7 +76,7 @@ class UserControllerTest {
     @Test
     void getUsers_ReturnsUsers() throws Exception {
         // precondition
-        User user2 = User.builder().id(2L).build();
+        User user2 = User.builder().id(2L).securityRole(SecurityRole.USER).build();
         List<User> users = List.of(user, user2);
         given(userService.getUsers()).willReturn(users);
 
@@ -99,6 +105,7 @@ class UserControllerTest {
                 .login(uDto.getLogin())
                 .password(uDto.getPassword())
                 .email(uDto.getEmail())
+                .securityRole(SecurityRole.USER)
                 .build();
 
         given(userService.updateUser(anyLong(), any(UserDTO.class))).willReturn(updatedUser);

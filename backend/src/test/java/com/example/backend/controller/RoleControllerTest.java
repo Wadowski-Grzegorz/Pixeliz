@@ -1,6 +1,7 @@
 package com.example.backend.controller;
 
 import com.example.backend.model.Role;
+import com.example.backend.service.JwtService;
 import com.example.backend.service.RoleService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,6 +36,9 @@ class RoleControllerTest {
 
     @MockitoBean
     private RoleService roleService;
+
+    @MockitoBean
+    private JwtService jwtService;
 
     private Role role;
 
