@@ -48,7 +48,7 @@ public class UserDrawingRoleService {
         return toUserRoleDTO(udr);
     }
 
-    public UserRoleDTO updateRole(Long drawingId, Long userId, Long roleId){
+    public UserRoleDTO updateRole(Long userId, Long drawingId, Long roleId){
         Role newRole = roleService.getRole(roleId);
         UserDrawingRole oldUdr = getUserDrawingRole(drawingId, userId);
 

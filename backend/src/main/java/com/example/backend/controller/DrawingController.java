@@ -83,7 +83,7 @@ public class DrawingController {
                                             @PathVariable Long userId,
                                             @RequestBody Map<String, Long> requestBody){
         Long roleId = requestBody.get("roleId");
-        return new ResponseEntity<>(drawingService.updateUserDrawingRole(roleId, userId, id), HttpStatus.OK);
+        return new ResponseEntity<>(drawingService.updateUserDrawingRole(userId, id, roleId), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}/user/{userId}")

@@ -92,8 +92,8 @@ public class DrawingService {
         return userDrawingRoleService.getUserFromDrawing(drawingId, userId);
     }
 
-    public UserRoleDTO updateUserDrawingRole(Long drawingId, Long userId, Long roleId){
-        return userDrawingRoleService.updateRole(roleId, userId, drawingId);
+    public UserRoleDTO updateUserDrawingRole(Long userId, Long drawingId, Long roleId){
+        return userDrawingRoleService.updateRole(userId, drawingId, roleId);
     }
 
     public void deleteUserDrawingRole(Long drawingId, Long userId){
