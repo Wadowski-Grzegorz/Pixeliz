@@ -1,5 +1,6 @@
 package com.example.backend.service;
 
+import com.example.backend.dto.AddUserToDrawingDTO;
 import com.example.backend.dto.DrawingDTO;
 import com.example.backend.dto.UserRoleDTO;
 import com.example.backend.exception.DrawingNotFoundException;
@@ -74,10 +75,11 @@ public class DrawingService {
         drawingRepository.deleteById(id);
     }
 
-    public UserDrawingRole addUserToDrawing(Long id, Long roleId, String name) {
-        User user = userService.getUserByName(name);
+
+    public UserDrawingRole addUserToDrawing(Long id, AddUserToDrawingDTO addUserToDrawingDTO) {
+        User user = userService.getUserByName(addUserToDrawingDTO.getName());
+        Role role = roleService.getRole(addUserToDrawingDTO.getRoleId());
         Drawing drawing = getDrawing(id);
-        Role role = roleService.getRole(roleId);
 
         return userDrawingRoleService.createUserDrawingRole(user, drawing, role);
     }

@@ -3,7 +3,6 @@ package com.example.backend.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-import org.antlr.v4.runtime.misc.NotNull;
 
 import java.util.Set;
 

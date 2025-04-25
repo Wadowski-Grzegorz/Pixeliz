@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -64,7 +63,7 @@ public class UserDrawingRoleService {
     }
 
 
-    public UserRoleDTO toUserRoleDTO(UserDrawingRole udr){
+    private UserRoleDTO toUserRoleDTO(UserDrawingRole udr){
         User user = udr.getUser();
         Role role = udr.getRole();
         return new UserRoleDTO(user.getId(), user.getName(), role);

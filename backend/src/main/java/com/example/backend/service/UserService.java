@@ -48,27 +48,6 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException(Map.of("name", name)));
     }
 
-    // check if del it
-//    public User getUser(LoginDTO loginDTO){
-//        // can be login by (login, password) or (email, password)
-//        String login = loginDTO.getLogin();
-//        String email = loginDTO.getEmail();
-//        String password = loginDTO.getPassword();
-//
-//        if(password.isBlank() || (email.isBlank() && login.isBlank())){
-//            throw new IllegalArgumentException("Blank credentials");
-//        }
-//
-//        Optional<User> user = Optional.empty();
-//        if(!email.isBlank()){
-//            user = userRepository.findByEmailAndPassword(email, password);
-//        } else if(!login.isBlank()){
-//            user = userRepository.findByLoginAndPassword(login, password);
-//        }
-//
-//        return user.orElseThrow(UserNotFoundException::new);
-//    }
-
     public AuthResponseDTO createUser(UserDTO userDTO){
         User user = DTOtoUser(userDTO);
         user.setSecurityRole(SecurityRole.USER);
@@ -128,11 +107,6 @@ public class UserService {
                 v -> userRepository.findByEmail(v).isPresent(),
                 user::setEmail);
 
-//        updateIfPresent(
-//                userDTO.getPassword(),
-//                "password",
-//                v -> userRepository.findByPassword(v).isPresent(),
-//                user::setPassword);
         if(userDTO.getPassword() != null && !userDTO.getPassword().isBlank()){
             user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         }
@@ -140,7 +114,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    void verifyUserCredentials(User user){
+    private void verifyUserCredentials(User user){
         if(userRepository.findByEmail(user.getEmail()).isPresent()){
             throw new UserAlreadyExistsException("email");
         }
@@ -152,14 +126,14 @@ public class UserService {
         }
     }
 
-    interface Checker{
+    private interface Checker{
         boolean check(String value);
     }
-    interface Updater{
+    private interface Updater{
         void update(String value);
     }
 
-    void updateIfPresent(String value, String type, Checker checker, Updater updater){
+    private void updateIfPresent(String value, String type, Checker checker, Updater updater){
         if(value != null && !value.isBlank()){
             if(checker.check(value)){
                 throw new UserAlreadyExistsException(type);
@@ -168,7 +142,7 @@ public class UserService {
         }
     }
 
-    public User DTOtoUser(UserDTO userDTO){
+    private User DTOtoUser(UserDTO userDTO){
         return User.builder()
                 .name(userDTO.getName())
                 .login(userDTO.getLogin())
@@ -177,7 +151,7 @@ public class UserService {
                 .build();
     }
 
-    public UserDTO UserToDTO(User user){
+    private UserDTO UserToDTO(User user){
         return UserDTO.builder()
                 .name(user.getName())
                 .login(user.getLogin())

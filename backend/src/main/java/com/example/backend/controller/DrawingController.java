@@ -62,10 +62,9 @@ public class DrawingController {
 
     @PostMapping("/{id}/user")
     public ResponseEntity<?> addUserToDrawing(@PathVariable Long id,
-                                              @RequestBody @Valid AddUserToDrawingDTO AddUserToDrawingDTO){
-        Long roleId = AddUserToDrawingDTO.getRoleId();
-        String name = AddUserToDrawingDTO.getName();
-        UserDrawingRole relation = drawingService.addUserToDrawing(id, roleId, name);
+                                              @RequestBody @Valid AddUserToDrawingDTO addUserToDrawingDTO
+    ){
+        UserDrawingRole relation = drawingService.addUserToDrawing(id, addUserToDrawingDTO);
         return new ResponseEntity<>(relation, HttpStatus.CREATED);
     }
 

@@ -1,7 +1,6 @@
 package com.example.backend.exception;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.util.Map;
 
