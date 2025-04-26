@@ -2,6 +2,7 @@ package com.example.backend.service;
 
 import com.example.backend.dto.AddUserToDrawingDTO;
 import com.example.backend.dto.DrawingDTO;
+import com.example.backend.dto.UpdateUserDrawingRoleDTO;
 import com.example.backend.dto.UserRoleDTO;
 import com.example.backend.exception.DrawingNotFoundException;
 import com.example.backend.model.Drawing;
@@ -92,8 +93,8 @@ public class DrawingService {
         return userDrawingRoleService.getUserFromDrawing(drawingId, userId);
     }
 
-    public UserRoleDTO updateUserDrawingRole(Long userId, Long drawingId, Long roleId){
-        return userDrawingRoleService.updateRole(userId, drawingId, roleId);
+    public UserRoleDTO updateUserDrawingRole(Long userId, Long drawingId, UpdateUserDrawingRoleDTO updateUserDrawingRoleDTO){
+        return userDrawingRoleService.updateRole(userId, drawingId, updateUserDrawingRoleDTO.getRoleId());
     }
 
     public void deleteUserDrawingRole(Long drawingId, Long userId){

@@ -1,6 +1,7 @@
 package com.example.backend.controller;
 
 import com.example.backend.dto.AddUserToDrawingDTO;
+import com.example.backend.dto.UpdateUserDrawingRoleDTO;
 import com.example.backend.dto.UserRoleDTO;
 import com.example.backend.model.Drawing;
 import com.example.backend.model.UserDrawingRole;
@@ -78,12 +79,11 @@ public class DrawingController {
         return new ResponseEntity<>(drawingService.getDrawingUser(id, userId), HttpStatus.OK);
     }
 
-    @PutMapping("{id}/user/{userId}")
-    public ResponseEntity<?> updateUserRole(@PathVariable Long id,
+    @PutMapping("/{id}/user/{userId}")
+    public ResponseEntity<?> updateUserDrawingRole(@PathVariable Long id,
                                             @PathVariable Long userId,
-                                            @RequestBody Map<String, Long> requestBody){
-        Long roleId = requestBody.get("roleId");
-        return new ResponseEntity<>(drawingService.updateUserDrawingRole(userId, id, roleId), HttpStatus.OK);
+                                            @RequestBody @Valid UpdateUserDrawingRoleDTO updateUserDrawingRoleDTO){
+        return new ResponseEntity<>(drawingService.updateUserDrawingRole(userId, id, updateUserDrawingRoleDTO), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}/user/{userId}")
