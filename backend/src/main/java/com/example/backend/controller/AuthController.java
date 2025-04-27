@@ -37,6 +37,4 @@ public class AuthController {
     public ResponseEntity<?> logout(){
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
-
-
 }

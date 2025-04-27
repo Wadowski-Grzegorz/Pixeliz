@@ -4,6 +4,7 @@ import com.example.backend.dto.UserRoleDTO;
 import com.example.backend.exception.RelationNotFoundException;
 import com.example.backend.model.*;
 import com.example.backend.repository.UserDrawingRoleRepository;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,13 +16,27 @@ public class UserDrawingRoleService {
 
     private final UserDrawingRoleRepository userDrawingRoleRepository;
     private final RoleService roleService;
+    private final UserService userService;
+    private final DrawingService drawingService;
 
-    public UserDrawingRoleService(UserDrawingRoleRepository userDrawingRoleRepository, RoleService roleService) {
+    public UserDrawingRoleService(UserDrawingRoleRepository userDrawingRoleRepository,
+                                  RoleService roleService,
+                                  UserService userService,
+                                  @Lazy DrawingService drawingService) {
         this.userDrawingRoleRepository = userDrawingRoleRepository;
         this.roleService = roleService;
+        this.userService = userService;
+        this.drawingService = drawingService;
     }
 
     public UserDrawingRole createUserDrawingRole(User user, Drawing drawing, Role role) {
+        if(user == null || user.getId() == null || userService.getUser(user.getId()) == null){
+            throw new RelationNotFoundException(Map.of("user", "incorrect"));
+        }else if(drawing == null || drawing.getId() == null || drawingService.getDrawing(drawing.getId()) == null){
+            throw new RelationNotFoundException(Map.of("drawing", "incorrect"));
+        }else if(role == null || role.getId() == null || roleService.getRole(role.getId()) == null){
+            throw new RelationNotFoundException(Map.of("role", "incorrect"));
+        }
         return userDrawingRoleRepository.save(new UserDrawingRole(user, drawing, role));
     }
 

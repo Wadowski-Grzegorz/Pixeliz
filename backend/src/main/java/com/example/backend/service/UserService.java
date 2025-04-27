@@ -3,6 +3,7 @@ package com.example.backend.service;
 import com.example.backend.dto.AuthResponseDTO;
 import com.example.backend.dto.LoginDTO;
 import com.example.backend.dto.UserDTO;
+import com.example.backend.exception.InvalidDataException;
 import com.example.backend.exception.UserAlreadyExistsException;
 import com.example.backend.exception.UserNotFoundException;
 import com.example.backend.model.SecurityRole;
@@ -36,12 +37,6 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException(Map.of("id", id)));
     }
 
-    public User getUserByEmail(String email){
-        return userRepository
-                .findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException(Map.of("email", email)));
-    }
-
     public User getUserByName(String name){
         return userRepository
                 .findByName(name)
@@ -61,6 +56,11 @@ public class UserService {
     }
 
     public AuthResponseDTO login(LoginDTO loginDTO){
+        if((loginDTO.getLogin() == null || loginDTO.getLogin().isEmpty())
+                && (loginDTO.getEmail() == null || loginDTO.getEmail().isEmpty())){
+            throw new InvalidDataException("Provide login or email with password");
+        }
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginDTO.getEmail(),
@@ -85,7 +85,7 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public User updateUser(Long id, UserDTO userDTO){
+    public AuthResponseDTO updateUser(Long id, UserDTO userDTO){
         // update what is present
         User user = getUser(id);
 
@@ -111,7 +111,13 @@ public class UserService {
             user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         }
 
-        return userRepository.save(user);
+        userRepository.save(user);
+
+        var jwtToken = jwtService.generateToken(user);
+        return AuthResponseDTO
+                .builder()
+                .token(jwtToken)
+                .build();
     }
 
     private void verifyUserCredentials(User user){

@@ -1,5 +1,6 @@
 package com.example.backend.controller;
 
+import com.example.backend.dto.AuthResponseDTO;
 import com.example.backend.dto.UserDTO;
 import com.example.backend.model.User;
 import com.example.backend.service.UserService;
@@ -35,9 +36,9 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody @Validated(UserDTO.Update.class) UserDTO userDTO){
-        User user = userService.updateUser(id, userDTO);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+    public ResponseEntity<AuthResponseDTO> updateUser(@PathVariable Long id, @RequestBody @Validated(UserDTO.Update.class) UserDTO userDTO){
+        AuthResponseDTO update = userService.updateUser(id, userDTO);
+        return new ResponseEntity<>(update, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
