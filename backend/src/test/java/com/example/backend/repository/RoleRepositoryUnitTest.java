@@ -38,4 +38,12 @@ public class RoleRepositoryUnitTest {
         assertThat(expected.isPresent()).isTrue();
         assertEquals(name, expected.get().getName());
     }
+
+    @Test
+    public void findByName_NameDoesNotExists_Empty() {
+        String name = "non existent name";
+        Optional<Role> expected = roleRepository.findByName(name);
+
+        assertThat(expected.isPresent()).isFalse();
+    }
 }

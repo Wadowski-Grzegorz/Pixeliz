@@ -40,12 +40,28 @@ public class UserRepositoryUnitTest {
     }
 
     @Test
+    public void findByName_NameDoesNotExists_Empty(){
+        String name = "Not Jamal";
+        Optional<User> expected = userRepository.findByName(name);
+
+        assertThat(expected.isPresent()).isFalse();
+    }
+
+    @Test
     public void findByEmail_EmailExists_User(){
         String email = "jamal@email.com";
         Optional<User> expected = userRepository.findByEmail(email);
 
         assertThat(expected.isPresent()).isTrue();
         assertEquals(email, expected.get().getEmail());
+    }
+
+    @Test
+    public void findByEmail_EmailDoesNotExists_Empty(){
+        String email = "NOTjamal@email.com";
+        Optional<User> expected = userRepository.findByEmail(email);
+
+        assertThat(expected.isPresent()).isFalse();
     }
 
     @Test
@@ -58,12 +74,28 @@ public class UserRepositoryUnitTest {
     }
 
     @Test
+    public void findByLogin_LoginDoesNotExists_Empty(){
+        String login = "NOTJamal445";
+        Optional<User> expected = userRepository.findByLogin(login);
+
+        assertThat(expected.isPresent()).isFalse();
+    }
+
+    @Test
     public void findByPassword_PasswordExists_User(){
         String password = "StrongPassword";
         Optional<User> expected = userRepository.findByPassword(password);
 
         assertThat(expected.isPresent()).isTrue();
         assertEquals(password, expected.get().getPassword());
+    }
+
+    @Test
+    public void findByPassword_PasswordDoestNotExists_Empty(){
+        String password = "NOTStrongPassword";
+        Optional<User> expected = userRepository.findByPassword(password);
+
+        assertThat(expected.isPresent()).isFalse();
     }
 
     @Test
@@ -76,6 +108,16 @@ public class UserRepositoryUnitTest {
         assertEquals(login, expected.get().getLogin());
         assertEquals(password, expected.get().getPassword());
     }
+
+    @Test
+    public void findByLoginAndPassword_LoginAndPasswordDoesNotExists_Empty(){
+        String login = "NOTJamal445";
+        String password = "NOTStrongPassword";
+        Optional<User> expected = userRepository.findByLoginAndPassword(login, password);
+
+        assertThat(expected.isPresent()).isFalse();
+    }
+
     @Test
     public void findByEmailAndPassword_EmailAndPasswordExists_User(){
         String email = "jamal@email.com";
@@ -85,5 +127,14 @@ public class UserRepositoryUnitTest {
         assertThat(expected.isPresent()).isTrue();
         assertEquals(email, expected.get().getEmail());
         assertEquals(password, expected.get().getPassword());
+    }
+
+    @Test
+    public void findByEmailAndPassword_EmailAndPasswordDoesNotExists_Empty(){
+        String email = "NOTjamal@email.com";
+        String password = "NOTStrongPassword";
+        Optional<User> expected = userRepository.findByEmailAndPassword(email, password);
+
+        assertThat(expected.isPresent()).isFalse();
     }
 }

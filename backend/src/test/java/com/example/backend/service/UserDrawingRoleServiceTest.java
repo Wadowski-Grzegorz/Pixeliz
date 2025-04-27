@@ -75,6 +75,9 @@ class UserDrawingRoleServiceTest {
     void createUserDrawingRole_ValidInput_ReturnsCreatedUserDrawingRole() {
         // precondition
         given(userDrawingRoleRepository.save(any(UserDrawingRole.class))).willReturn(udr);
+        given(userService.getUser(user.getId())).willReturn(user);
+        given(drawingService.getDrawing(drawing.getId())).willReturn(drawing);
+        given(roleService.getRole(role.getId())).willReturn(role);
 
         // action
         UserDrawingRole returnedUdr = userDrawingRoleService.createUserDrawingRole(user, drawing, role);
@@ -83,6 +86,18 @@ class UserDrawingRoleServiceTest {
         verify(userDrawingRoleRepository, times(1)).save(any(UserDrawingRole.class));
         assertThat(returnedUdr)
                 .isEqualTo(udr);
+    }
+
+    @Test
+    void createUserDrawingRole_InvalidInput_ThrowsRelationNotFoundException() {
+        // precondition
+
+        // action
+        RelationNotFoundException ex = assertThrows(RelationNotFoundException.class, () -> userDrawingRoleService.createUserDrawingRole(null, null, null));
+
+        // verify
+        assertThat(ex.getCriteria())
+                .isNotNull();
     }
 
     @Test

@@ -1,12 +1,12 @@
 package com.example.backend.controller;
 
+import com.example.backend.dto.AddUserToDrawingDTO;
 import com.example.backend.dto.DrawingDTO;
-import com.example.backend.dto.UserDTO;
-import com.example.backend.model.Drawing;
-import com.example.backend.model.User;
+import com.example.backend.dto.UpdateUserDrawingRoleDTO;
+import com.example.backend.dto.UserRoleDTO;
+import com.example.backend.model.*;
 import com.example.backend.service.DrawingService;
 import com.example.backend.service.JwtService;
-import com.example.backend.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -49,6 +48,7 @@ class DrawingControllerTest {
     private JwtService jwtService;
 
     private Drawing drawing;
+    private UserDrawingRole udr;
 
     @BeforeEach
     void setUp() {
@@ -60,6 +60,12 @@ class DrawingControllerTest {
                 .size_x(1)
                 .size_y(2)
                 .build();
+
+        udr = new UserDrawingRole(
+                User.builder().id(1L).name("Ahmed").securityRole(SecurityRole.USER).build(),
+                drawing,
+                Role.builder().id(1L).build()
+        );
     }
 
     @Test
@@ -82,6 +88,32 @@ class DrawingControllerTest {
         // verify
         response.andExpect(status().isCreated())
                 .andExpect(content().json(objectMapper.writeValueAsString(drawing)));
+
+    }
+
+    @Test
+    void createDrawing_InValidInput_ReturnsBadRequest() throws Exception {
+        // precondition
+        DrawingDTO dDto = new DrawingDTO(
+                "",
+                null,
+                0,
+                0,
+                0L
+        );
+
+        // action
+        ResultActions response = mockMvc.perform(post("/api/drawing", drawing.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dDto)));
+
+        // verify
+        response.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.details.grid").exists())
+                .andExpect(jsonPath("$.details.name").exists())
+                .andExpect(jsonPath("$.details.size_x").exists())
+                .andExpect(jsonPath("$.details.size_y").exists())
+                .andExpect(jsonPath("$.details.authorId").exists());
 
     }
 
@@ -156,22 +188,146 @@ class DrawingControllerTest {
 
 
     @Test
-    void addUserToDrawing() {
+    void addUserToDrawing_ValidInput_ReturnsCreatedUserDrawingRole() throws Exception{
+        // precondition
+        Long drawingId = drawing.getId();
+        Long roleId = udr.getRole().getId();
+        String uName = udr.getUser().getName();
+
+        AddUserToDrawingDTO dto = new AddUserToDrawingDTO(roleId, uName);
+
+        given(drawingService.addUserToDrawing(anyLong(), any(AddUserToDrawingDTO.class)))
+                .willReturn(udr);
+
+        // action
+        ResultActions response = mockMvc.perform(post("/api/drawing/{id}/user", drawingId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)));
+
+        // verify
+        response.andExpect(status().isCreated())
+                .andExpect(jsonPath("$.drawing.id").value(drawingId))
+                .andExpect(jsonPath("$.user.name").value(uName))
+                .andExpect(jsonPath("$.role.id").value(roleId));
+
     }
 
     @Test
-    void getUsersFromDrawing() {
+    void addUserToDrawing_InvalidInput_ReturnsBadRequest() throws Exception{
+        // precondition
+        Long drawingId = drawing.getId();
+
+        AddUserToDrawingDTO dto = new AddUserToDrawingDTO(null, null);
+
+        given(drawingService.addUserToDrawing(anyLong(), any(AddUserToDrawingDTO.class)))
+                .willReturn(udr);
+
+        // action
+        ResultActions response = mockMvc.perform(post("/api/drawing/{id}/user", drawingId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)));
+
+        // verify
+        response.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.details.roleId").exists())
+                .andExpect(jsonPath("$.details.name").exists());
+
     }
 
     @Test
-    void getUserFromDrawing() {
+    void getUsersFromDrawing_IdExists_ReturnUserRoleList() throws Exception{
+        // precondition
+        Long drawingId = drawing.getId();
+        String uName = udr.getUser().getName();
+
+        UserRoleDTO ur = new UserRoleDTO(1L, uName, udr.getRole());
+        UserRoleDTO ur2 = new UserRoleDTO(2L, "Jamal", Role.builder().id(2L).build());
+
+        List<UserRoleDTO> urList = List.of(ur, ur2);
+        given(drawingService.getDrawingUsers(drawingId)).willReturn(urList);
+
+        // action
+        ResultActions response = mockMvc.perform(get("/api/drawing/{id}/user", drawingId));
+
+        // verify
+        response.andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(urList)));
     }
 
     @Test
-    void updateUserRole() {
+    void getUserFromDrawing_IdExists_ReturnUserRole() throws Exception {
+        // precondition
+        Long drawingId = drawing.getId();
+        Long userId = udr.getUser().getId();
+        String uName = udr.getUser().getName();
+
+        UserRoleDTO ur = new UserRoleDTO(1L, uName, udr.getRole());
+        given(drawingService.getDrawingUser(drawingId, userId)).willReturn(ur);
+
+        // action
+        ResultActions response = mockMvc.perform(get("/api/drawing/{id}/user/{userId}", drawingId, userId));
+
+        // verify
+        response.andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(ur)));
+
     }
 
     @Test
-    void deleteUserFromDrawing() {
+    void updateUserDrawingRole_ValidInput_ReturnsUpdatedUserDrawingRole() throws Exception {
+        // precondition
+        Long drawingId = drawing.getId();
+        Long userId = udr.getUser().getId();
+        String uName = udr.getUser().getName();
+        Long updateRoleId = 2L;
+        String updateRoleName = "new name";
+
+        Role updateRole = Role.builder().id(updateRoleId).name(updateRoleName).build();
+        UpdateUserDrawingRoleDTO updateUserDrawingRoleDTO = new UpdateUserDrawingRoleDTO(updateRoleId);
+        UserRoleDTO ur = new UserRoleDTO(userId, uName, updateRole);
+
+        given(drawingService.updateUserDrawingRole(userId, drawingId, updateUserDrawingRoleDTO)).willReturn(ur);
+
+        // action
+        ResultActions response = mockMvc.perform(put("/api/drawing/{id}/user/{userId}", drawingId, userId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"roleId\": \"" + updateRoleId.toString() + "\" }"));
+
+        // verify
+        response.andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(ur)));
+
+    }
+
+    @Test
+    void updateUserDrawingRole_MissingFields_ReturnsBadRequest() throws Exception {
+        // precondition
+        Long drawingId = drawing.getId();
+        Long userId = udr.getUser().getId();
+
+        // action
+        ResultActions response = mockMvc.perform(put("/api/drawing/{id}/user/{userId}", drawingId, userId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"roleId\": \"null\" }"));
+
+        // verify
+        response.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.details.roleId").exists());
+
+    }
+
+    @Test
+    void deleteUserFromDrawing_ReturnsNoContent() throws Exception {
+        // precondition
+        Long drawingId = drawing.getId();
+        Long userId = udr.getUser().getId();
+
+        willDoNothing().given(drawingService).deleteUserDrawingRole(userId, drawingId);
+
+        // action
+        ResultActions response = mockMvc.perform(delete("/api/drawing/{id}/user/{userId}", drawingId, userId));
+
+        // verify
+        response.andExpect(status().isNoContent());
     }
 }

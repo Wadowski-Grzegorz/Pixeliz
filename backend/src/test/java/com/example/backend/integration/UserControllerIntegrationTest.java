@@ -18,7 +18,6 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -55,7 +54,7 @@ class UserControllerIntegrationTest {
     }
 
     @Test
-    void getUser_IdExists() throws Exception {
+    void getUser_IdExists_ReturnsUser() throws Exception {
         // precondition
 
         // action
@@ -64,6 +63,20 @@ class UserControllerIntegrationTest {
         // verify
         response.andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(user)));
+
+    }
+
+    @Test
+    void getUser_IdDoesNotExists_ThrowsNotFound() throws Exception {
+        // precondition
+        Long id = 100L;
+
+        // action
+        ResultActions response = mockMvc.perform(get("/api/user/{id}", id));
+
+        // verify
+        response.andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.details").exists());
 
     }
 
@@ -89,7 +102,7 @@ class UserControllerIntegrationTest {
     }
 
     @Test
-    void updateUser_IdExists_ReturnsUpdatedUser() throws Exception {
+    void updateUser_ValidInput_ReturnsUpdatedUser() throws Exception {
         // precondition
         UserDTO uDto = new UserDTO(
                 "newName",
@@ -105,18 +118,95 @@ class UserControllerIntegrationTest {
 
         // verify
         response.andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(user.getId()))
-                .andExpect(jsonPath("$.name").value(uDto.getName()))
-                .andExpect(jsonPath("$.login").value(uDto.getLogin()))
-                .andExpect(jsonPath("$.email").value(uDto.getEmail()));
-
-        String json = response.andReturn().getResponse().getContentAsString();
-        String returnedPassword = objectMapper.readTree(json).get("password").asText();
-        assertTrue(passwordEncoder.matches(uDto.getPassword(), returnedPassword));
+                .andExpect(jsonPath("$.token").exists());
     }
 
     @Test
-    void deleteUser_IdExists() throws Exception {
+    void updateUser_IdDoesNotExists_ReturnsNotFound() throws Exception {
+        // precondition
+        UserDTO uDto = new UserDTO(
+                "newName",
+                "newLogin",
+                "newEmail@email.com",
+                "newPassword"
+        );
+        Long invalidId = 100L;
+
+        // action
+        ResultActions response = mockMvc.perform(put("/api/user/{id}", invalidId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(uDto)));
+
+        // verify
+        response.andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.details").isNotEmpty());
+    }
+
+    @Test
+    void updateUser_NameExists_ReturnsConflict() throws Exception {
+        // precondition
+        UserDTO uDto = new UserDTO(
+                user.getName(),
+                "newLogin",
+                "newEmail@email.com",
+                "newPassword"
+        );
+        Long id = user.getId();
+
+        // action
+        ResultActions response = mockMvc.perform(put("/api/user/{id}", id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(uDto)));
+
+        // verify
+        response.andExpect(status().isConflict())
+                .andExpect(jsonPath("$.error").isNotEmpty());
+    }
+
+    @Test
+    void updateUser_LoginExists_ReturnsConflict() throws Exception {
+        // precondition
+        UserDTO uDto = new UserDTO(
+                "newName",
+                user.getLogin(),
+                "newEmail@email.com",
+                "newPassword"
+        );
+        Long id = user.getId();
+
+        // action
+        ResultActions response = mockMvc.perform(put("/api/user/{id}", id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(uDto)));
+
+        // verify
+        response.andExpect(status().isConflict())
+                .andExpect(jsonPath("$.error").isNotEmpty());
+    }
+
+    @Test
+    void updateUser_EmailExists_ReturnsConflict() throws Exception {
+        // precondition
+        UserDTO uDto = new UserDTO(
+                "newName",
+                "newLogin",
+                user.getEmail(),
+                "newPassword"
+        );
+        Long id = user.getId();
+
+        // action
+        ResultActions response = mockMvc.perform(put("/api/user/{id}", id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(uDto)));
+
+        // verify
+        response.andExpect(status().isConflict())
+                .andExpect(jsonPath("$.error").isNotEmpty());
+    }
+
+    @Test
+    void deleteUser_IdExists_ReturnsNoContent() throws Exception {
         // precondition
 
         // action
@@ -124,5 +214,17 @@ class UserControllerIntegrationTest {
 
         // verify
         response.andExpect(status().isNoContent());
+    }
+
+    @Test
+    void deleteUser_IdDoesNotExists_ReturnsNotFound() throws Exception {
+        // precondition
+        Long id = 100L;
+        // action
+        ResultActions response = mockMvc.perform(delete("/api/user/{id}", id));
+
+        // verify
+        response.andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.details").isNotEmpty());
     }
 }

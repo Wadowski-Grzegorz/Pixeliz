@@ -1,5 +1,6 @@
 package com.example.backend.controller;
 
+import com.example.backend.dto.AuthResponseDTO;
 import com.example.backend.dto.UserDTO;
 import com.example.backend.model.SecurityRole;
 import com.example.backend.model.User;
@@ -108,7 +109,9 @@ class UserControllerTest {
                 .securityRole(SecurityRole.USER)
                 .build();
 
-        given(userService.updateUser(anyLong(), any(UserDTO.class))).willReturn(updatedUser);
+        String token = "I am a token";
+        AuthResponseDTO authResponseDTO = new AuthResponseDTO(token);
+        given(userService.updateUser(anyLong(), any(UserDTO.class))).willReturn(authResponseDTO);
 
         // action
         ResultActions response = mockMvc.perform(put("/api/user/{id}", user.getId())
@@ -117,12 +120,11 @@ class UserControllerTest {
 
         // verify
         response.andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(updatedUser)));
-
+                .andExpect(jsonPath("$.token").value(token));
     }
 
     @Test
-    void deleteUser_IdExists() throws Exception {
+    void deleteUser_IdExists_ReturnsNoContent() throws Exception {
         // precondition
         willDoNothing().given(userService).deleteUser(user.getId());
 
