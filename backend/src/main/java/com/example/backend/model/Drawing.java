@@ -21,7 +21,7 @@ public class Drawing {
 
     @Lob
     @Column(columnDefinition = "TEXT")
-    private String grid;
+    private String pixels;
     private String name;
     private int size_x;
     private int size_y;

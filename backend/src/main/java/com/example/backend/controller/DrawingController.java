@@ -112,7 +112,7 @@ public class DrawingController {
 
     @Operation(
             summary = "Update specific drawing",
-            description = "Can only update name and grid fields of specific drawing"
+            description = "Can only update name and pixels fields of specific drawing"
     )
     @ApiResponses({
             @ApiResponse(

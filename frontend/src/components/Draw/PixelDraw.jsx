@@ -8,7 +8,7 @@ const COLORS = ['brown', 'purple']
 
 const PixelDraw = () => {
     const contextRef = useRef(null);
-    const canvasRef = useRef(null);
+    const pixelsRef = useRef(null);
     const gridRef = useRef(null);
 
     const location = useLocation();
@@ -17,7 +17,7 @@ const PixelDraw = () => {
     const [row, setRow] = useState(location.state?.sizeX || 30);
     const [column, setColumn] = useState(location.state?.sizeY || 30);
 
-    const [grid, setGrid] = useState(Array(row * column).fill('white')); // grid of colored pixels
+    const [pixels, setPixels] = useState(Array(row * column).fill('white')); // drawing of colored pixels
     const [currentColor, setCurrentColor] = useState('white');
     const [isDrawing, setIsDrawing] = useState(false);
 
@@ -27,29 +27,25 @@ const PixelDraw = () => {
     const [redraw, setRedraw] = useState(false);
 
     useEffect(() => {
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext("2d");
+        const ctx = pixelsRef.current.getContext("2d");
         contextRef.current = ctx;
         
-        drawSheet();
+        drawPixels();
         drawGrid();
         setRedraw(false);
     }, [redraw]);
 
     useEffect(() =>{
-        console.log("urlid: ", id);
         if(id){
-            loadDrawing(id);
-        }else{
-            console.log("no drawing");
+            loadPixels(id);
         }
     }, []);
 
-    const drawSheet = () =>{
+    const drawPixels = () =>{
         const ctx = contextRef.current;
         for(let x = 0; x < row; x++){
             for(let y = 0; y < column; y++){
-                ctx.fillStyle = grid[y * row + x];
+                ctx.fillStyle = pixels[y * row + x];
                 ctx.fillRect(x * PIXEL_SIZE, y * PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE);
             }    
         }
@@ -57,9 +53,6 @@ const PixelDraw = () => {
 
     const drawGrid = () =>{
         const ctx = gridRef.current.getContext("2d");
-        
-
-        // draw grid
         ctx.strokeStyle = 'grey';
         
         for(let i = 0; i <= row; i++){
@@ -83,19 +76,19 @@ const PixelDraw = () => {
         const x = Math.floor(offsetX / PIXEL_SIZE);
         const y = Math.floor(offsetY / PIXEL_SIZE);
 
-        const newGrid = [...grid];
+        const newPixels = [...pixels];
         const index = y * row + x;
         
-        if(grid[index] === currentColor){
+        if(pixels[index] === currentColor){
             return;
         }
 
-        newGrid[index] = currentColor;
+        newPixels[index] = currentColor;
         ctx.fillStyle = currentColor;
 
         ctx.fillRect(x * PIXEL_SIZE, y * PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE);
 
-        setGrid(newGrid);
+        setPixels(newPixels);
     };
 
     const handleMouseDown = (event) => {
@@ -121,7 +114,7 @@ const PixelDraw = () => {
         try {
             const response = await axios.post('http://localhost:9090/api/drawing', 
                 {
-                    grid: JSON.stringify(grid),
+                    pixels: JSON.stringify(pixels),
                     name: drawingName,
                     size_x: row,
                     size_y: column
@@ -140,12 +133,12 @@ const PixelDraw = () => {
         }
         try {
             const response = await axios.get(`http://localhost:9090/api/drawing/${id}`);
-            const drawing = response.data;
-            setGrid(JSON.parse(drawing.grid));
-            setDrawingName(drawing.name);
-            setRow(drawing.size_x);
-            setColumn(drawing.size_y);
-            setDrawingId(drawing.id);
+            const data = response.data;
+            setPixels(JSON.parse(data.pixels));
+            setDrawingName(data.name);
+            setRow(data.size_x);
+            setColumn(data.size_y);
+            setDrawingId(data.id);
             setRedraw(true);
         } catch(error){
             console.error('Error while loading drawing:', error);
@@ -155,7 +148,7 @@ const PixelDraw = () => {
     return(
         <div className="pixel-draw" style={{position: 'relative'}}>
             <canvas 
-                ref={canvasRef}
+                ref={pixelsRef}
                 height={column * PIXEL_SIZE}
                 width={row * PIXEL_SIZE}
                 onMouseDown={handleMouseDown}

@@ -14,7 +14,7 @@ import lombok.*;
 public class DrawingDTO {
     @NotNull(groups = {Default.class, Update.class})
     @NotBlank(groups = {Default.class, Update.class})
-    private String grid;
+    private String pixels;
 
     @NotNull(groups = {Default.class, Update.class})
     private String name;

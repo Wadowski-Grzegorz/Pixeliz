@@ -55,7 +55,7 @@ class DrawingControllerTest {
         drawing = Drawing
                 .builder()
                 .id(1L)
-                .grid("[\"white\",\"white\"]")
+                .pixels("[\"white\",\"white\"]")
                 .name("my drawing")
                 .size_x(1)
                 .size_y(2)
@@ -109,7 +109,7 @@ class DrawingControllerTest {
 
         // verify
         response.andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.details.grid").exists())
+                .andExpect(jsonPath("$.details.pixels").exists())
                 .andExpect(jsonPath("$.details.name").exists())
                 .andExpect(jsonPath("$.details.size_x").exists())
                 .andExpect(jsonPath("$.details.size_y").exists())
@@ -134,7 +134,7 @@ class DrawingControllerTest {
     @Test
     void getDrawings_ReturnsDrawings() throws Exception {
         // precondition
-        Drawing drawing2 = Drawing.builder().id(2L).grid("[\"red\",\"red\"]").name("second drawing").size_x(1).size_y(2).build();
+        Drawing drawing2 = Drawing.builder().id(2L).pixels("[\"red\",\"red\"]").name("second drawing").size_x(1).size_y(2).build();
         List<Drawing> drawings = List.of(drawing, drawing2);
         given(drawingService.getDrawings()).willReturn(drawings);
 
@@ -152,11 +152,11 @@ class DrawingControllerTest {
         Long drawingId = drawing.getId();
         DrawingDTO dDto = DrawingDTO
                 .builder()
-                .grid("[\"brown\",\"brown\"]")
+                .pixels("[\"brown\",\"brown\"]")
                 .name("my updated drawing")
                 .build();
         Drawing updatedDrawing = Drawing.builder()
-                .grid(dDto.getGrid())
+                .pixels(dDto.getPixels())
                 .name(dDto.getName())
                 .build();
 
