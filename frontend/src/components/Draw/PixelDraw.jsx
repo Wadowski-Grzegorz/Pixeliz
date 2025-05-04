@@ -37,7 +37,7 @@ const PixelDraw = () => {
 
     useEffect(() =>{
         if(id){
-            loadPixels(id);
+            loadDrawing(id);
         }
     }, []);
 
