@@ -13,10 +13,10 @@ const PixelDraw = () => {
     const location = useLocation();
     const { id } = useParams();
 
-    const [columns, setColumns] = useState(location.state?.sizeX || 30);
-    const [rows, setRows] = useState(location.state?.sizeY || 30);
+    const [row, setrow] = useState(location.state?.sizeX || 30);
+    const [column, setcolumn] = useState(location.state?.sizeY || 30);
 
-    const [grid, setGrid] = useState(Array(rows * columns).fill('white')); // grid of colored pixels
+    const [grid, setGrid] = useState(Array(row * column).fill('white')); // grid of colored pixels
     const [currentColor, setCurrentColor] = useState('white');
     const [isDrawing, setIsDrawing] = useState(false);
 
@@ -31,8 +31,8 @@ const PixelDraw = () => {
     }, [grid]);
 
     useEffect(() => {
-        setGrid(Array(rows * columns).fill('white'));
-    }, [rows, columns]);
+        setGrid(Array(row * column).fill('white'));
+    }, [row, column]);
 
     useEffect(() =>{
         console.log("urlid: ", id);
@@ -48,26 +48,26 @@ const PixelDraw = () => {
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
         // draw pixels
-        for(let x = 0; x < columns; x++){
-            for(let y = 0; y < rows; y++){
-                ctx.fillStyle = grid[x * rows + y];
+        for(let x = 0; x < column; x++){
+            for(let y = 0; y < row; y++){
+                ctx.fillStyle = grid[y * column + x];
                 ctx.fillRect(x * PIXEL_SIZE, y * PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE);
             }    
         }
 
         // draw grid
         ctx.strokeStyle = 'grey';
-        for(let x = 0; x <= rows; x++){
+        for(let x = 0; x <= row; x++){
             ctx.beginPath();
             ctx.moveTo(0, x * PIXEL_SIZE);
-            ctx.lineTo(columns * PIXEL_SIZE, x * PIXEL_SIZE);
+            ctx.lineTo(column * PIXEL_SIZE, x * PIXEL_SIZE);
             ctx.stroke();
         }
 
-        for(let y = 0; y <= columns; y++){
+        for(let y = 0; y <= column; y++){
             ctx.beginPath();
             ctx.moveTo(y * PIXEL_SIZE, 0);
-            ctx.lineTo(y * PIXEL_SIZE, rows * PIXEL_SIZE);
+            ctx.lineTo(y * PIXEL_SIZE, row * PIXEL_SIZE);
             ctx.stroke();
         }
     };
@@ -78,7 +78,7 @@ const PixelDraw = () => {
         const y = Math.floor(offsetY / PIXEL_SIZE);
 
         const newGrid = [...grid];
-        newGrid[x * rows + y] = currentColor;
+        newGrid[y * row + x] = currentColor;
         setGrid(newGrid);
         drawGrid();
     };
@@ -108,8 +108,8 @@ const PixelDraw = () => {
                 {
                     grid: JSON.stringify(grid),
                     name: drawingName,
-                    size_x: columns,
-                    size_y: rows
+                    size_x: row,
+                    size_y: column
                 },
                 {headers: {"Content-Type": "application/json"}}
             );
@@ -128,8 +128,8 @@ const PixelDraw = () => {
             const drawing = response.data;
             setGrid(JSON.parse(drawing.grid));
             setDrawingName(drawing.name);
-            setColumns(drawing.size_x);
-            setRows(drawing.size_y);
+            setrow(drawing.size_x);
+            setcolumn(drawing.size_y);
             setDrawingId(drawing.id);
             drawGrid();
         } catch(error){
@@ -141,8 +141,8 @@ const PixelDraw = () => {
         <div className="pixel-draw">
             <canvas 
                 ref={canvasRef}
-                width={columns * PIXEL_SIZE}
-                height={rows * PIXEL_SIZE}
+                height={column * PIXEL_SIZE}
+                width={row * PIXEL_SIZE}
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
