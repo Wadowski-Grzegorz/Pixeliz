@@ -141,10 +141,12 @@ input{
     width: 100vw;
     height: 100vh;
     backdrop-filter: blur(2px);
+    z-index: 99;
 }
 
 .popup{
     position: absolute;
+    z-index: 100;
     top: 50%;
     left: 50%;
     background-color: #575757;

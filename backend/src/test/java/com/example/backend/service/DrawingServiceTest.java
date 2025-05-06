@@ -48,7 +48,7 @@ class DrawingServiceTest {
         drawing = Drawing
                 .builder()
                 .id(1L)
-                .grid("[\"white\",\"white\"]")
+                .pixels("[\"white\",\"white\"]")
                 .name("my drawing")
                 .size_x(1)
                 .size_y(2)
@@ -122,7 +122,7 @@ class DrawingServiceTest {
         Drawing drawing2 = Drawing
                 .builder()
                 .id(2L)
-                .grid("[\"white\",\"white\", \"white\"]")
+                .pixels("[\"white\",\"white\", \"white\"]")
                 .name("my second drawing")
                 .size_x(1)
                 .size_y(3)
@@ -145,7 +145,7 @@ class DrawingServiceTest {
         Long id = 1L;
         DrawingDTO dDto = DrawingDTO
                 .builder()
-                .grid("[\"brown\",\"brown\"]")
+                .pixels("[\"brown\",\"brown\"]")
                 .name("my updated drawing")
                 .build();
         given(drawingRepository.findById(id)).willReturn(Optional.of(drawing));
@@ -157,7 +157,7 @@ class DrawingServiceTest {
         // verify
         verify(drawingRepository, times(1)).save(any(Drawing.class));
         assertThat(returnedDrawing.getId()).isEqualTo(id);
-        assertThat(returnedDrawing.getGrid()).isEqualTo("[\"brown\",\"brown\"]");
+        assertThat(returnedDrawing.getPixels()).isEqualTo("[\"brown\",\"brown\"]");
         assertThat(returnedDrawing.getName()).isEqualTo("my updated drawing");
     }
 

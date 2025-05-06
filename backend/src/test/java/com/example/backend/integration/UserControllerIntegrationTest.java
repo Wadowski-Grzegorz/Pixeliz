@@ -102,7 +102,7 @@ class UserControllerIntegrationTest {
     }
 
     @Test
-    void updateUser_ValidInput_ReturnsUpdatedUser() throws Exception {
+    void updateUser_ValidInput_ReturnsToken() throws Exception {
         // precondition
         UserDTO uDto = new UserDTO(
                 "newName",

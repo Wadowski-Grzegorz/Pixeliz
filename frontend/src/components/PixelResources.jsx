@@ -4,14 +4,10 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRotateRight } from "@fortawesome/free-solid-svg-icons";
 
-//TODO:
-//Click on drawing goes to /id with drawing
-
 const PixelResources = () =>{
 
     const [drawings, setDrawings] = useState([]);
 
-    // get all drawings from backend (for now not only for certain user)
     const fetchDrawings = () =>{
         axios.get(`http://localhost:9090/api/drawing`)
             .then(response =>{

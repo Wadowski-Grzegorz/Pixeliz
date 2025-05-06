@@ -36,7 +36,7 @@ public class DrawingService {
     public Drawing createDrawing(DrawingDTO drawingDTO) {
         Drawing drawing = new Drawing();
         drawing.setName(drawingDTO.getName());
-        drawing.setGrid(drawingDTO.getGrid());
+        drawing.setPixels(drawingDTO.getPixels());
         drawing.setSize_x(drawingDTO.getSize_x());
         drawing.setSize_y(drawingDTO.getSize_y());
 
@@ -65,8 +65,8 @@ public class DrawingService {
         if(drawingUpdate.getName() != null){
             drawing.setName(drawingUpdate.getName());
         }
-        if(drawingUpdate.getGrid() != null && !drawingUpdate.getGrid().isBlank()){
-            drawing.setGrid(drawingUpdate.getGrid());
+        if(drawingUpdate.getPixels() != null && !drawingUpdate.getPixels().isBlank()){
+            drawing.setPixels(drawingUpdate.getPixels());
         }
         return drawingRepository.save(drawing);
     }

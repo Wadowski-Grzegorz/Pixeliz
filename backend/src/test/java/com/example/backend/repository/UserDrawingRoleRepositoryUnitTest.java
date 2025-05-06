@@ -57,7 +57,7 @@ public class UserDrawingRoleRepositoryUnitTest {
 
         Drawing drawing = Drawing
                 .builder()
-                .grid("[\"purple\",\"purple\",\"brown\",\"brown\"]")
+                .pixels("[\"purple\",\"purple\",\"brown\",\"brown\"]")
                 .name("kitty")
                 .size_x(1)
                 .size_y(4)
