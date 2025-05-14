@@ -4,7 +4,7 @@ import axios from 'axios';
 import './PixelDraw.css';
 
 const PIXEL_SIZE = 15;
-const COLORS = ['brown', 'purple']
+const COLORS = ['#964B00', '#6B1D8C']
 
 const PixelDraw = () => {
     const contextRef = useRef(null);
@@ -17,8 +17,8 @@ const PixelDraw = () => {
     const [row, setRow] = useState(location.state?.sizeX || 30);
     const [column, setColumn] = useState(location.state?.sizeY || 30);
 
-    const [pixels, setPixels] = useState(Array(row * column).fill('white')); // drawing of colored pixels
-    const [currentColor, setCurrentColor] = useState('white');
+    const [pixels, setPixels] = useState(Array(row * column).fill('#FFFFFF')); // drawing of colored pixels
+    const [currentColor, setCurrentColor] = useState('#FFFFFF');
     const [isDrawing, setIsDrawing] = useState(false);
 
     const [drawingId, setDrawingId] = useState(0);
@@ -53,7 +53,7 @@ const PixelDraw = () => {
 
     const drawGrid = () =>{
         const ctx = gridRef.current.getContext("2d");
-        ctx.strokeStyle = 'grey';
+        ctx.strokeStyle = '#808080';
         
         for(let i = 0; i <= row; i++){
             ctx.beginPath();
@@ -180,7 +180,7 @@ const PixelDraw = () => {
             <div>
                 {COLORS.map((color) => (
                     <button key={color} onClick={() => changeColor(color)}>
-                        {color}
+                        im color
                     </button>
                 ))}
             </div>
