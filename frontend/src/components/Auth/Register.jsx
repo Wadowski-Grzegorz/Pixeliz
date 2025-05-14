@@ -1,10 +1,12 @@
-import {useState} from 'react';
+import { useState } from 'react';
 import axios from 'axios';
+import { useAuth } from "./AuthProvider";
 
-
-const Login = () =>{
+const Register = () =>{
+    const { setToken } = useAuth();
 
     const [credentials, setCredentials] = useState({
+        name: "",
         login: "",
         email: "",
         password: ""
@@ -12,9 +14,9 @@ const Login = () =>{
 
     const handleSubmit = (event) =>{
         event.preventDefault();
-        axios.post(`http://localhost:9090/api/auth/login`, credentials)
-            .then(response => console.log(response))
-            .catch(error => console.error('Error login', error))
+        axios.post(`http://localhost:9090/api/auth/register`, credentials)
+            .then(response => setToken(response.data.token))
+            .catch(error => console.error('Error creating an user.', error));
     }
 
     const handleChange = (event) =>{
@@ -24,8 +26,15 @@ const Login = () =>{
 
     return(
         <>
-            <h1>Login</h1>
+            <h1>Register</h1>
             <form onSubmit={handleSubmit}>
+                <label>
+                    Username:
+                    <input  type="text"
+                            name="name"
+                            value={credentials.name}
+                            onChange={handleChange}/>
+                </label>
                 <label>
                     Login:
                     <input  type="text"
@@ -53,4 +62,4 @@ const Login = () =>{
     );
 }
 
-export default Login;
+export default Register;

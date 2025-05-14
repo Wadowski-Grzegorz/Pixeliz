@@ -1,7 +1,7 @@
 import React from 'react';
 import {useState} from 'react';
 import { Link } from 'react-router-dom';
-import PixelCreateForm from './Draw/PixelCreateForm';
+import PixelCreateForm from '../PixelDraw/PixelCreateForm';
 
 
 function Navbar(){
@@ -15,12 +15,14 @@ function Navbar(){
         <>
             <nav className="navbar">
                 <div>
+                    <Link to="/">Home</Link>
                     <button onClick={togglePop}>New Project</button>
                 </div>
 
                 <div>
-                    <Link to="/">Home</Link>
-                    <Link to="/Resources">Resources</Link>
+                    <Link to="/resources">Resources</Link>
+                    <Link to="/login">Login</Link>
+                    <Link to="/register">Register</Link>
                 </div>
             </nav>
 
