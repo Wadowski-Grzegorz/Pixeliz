@@ -7,8 +7,6 @@ import { ProtectedRoutes } from "./ProtectedRoutes.jsx";
 import { PublicOnlyRoutes } from "./PublicOnlyRoutes.jsx";
 
 const MyRoutes = () => {
-    // const { token } = useAuth();
-    const token = null;
 
     return(
         <Routes>
@@ -18,7 +16,6 @@ const MyRoutes = () => {
           </Route>
 
 
-          
             <Route element={<PublicOnlyRoutes/>}>
               <Route path="login" element={<Login/>}/>
               <Route path="register" element={<Register/>}/>

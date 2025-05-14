@@ -1,8 +1,10 @@
 import {useState} from 'react';
 import axios from 'axios';
-
+import { useAuth } from "./AuthProvider";
 
 const Login = () =>{
+
+    const { setToken } = useAuth();
 
     const [credentials, setCredentials] = useState({
         login: "",
@@ -10,11 +12,15 @@ const Login = () =>{
         password: ""
     });
 
-    const handleSubmit = (event) =>{
+    const handleSubmit = async (event) =>{
         event.preventDefault();
-        axios.post(`http://localhost:9090/api/auth/login`, credentials)
-            .then(response => console.log(response))
-            .catch(error => console.error('Error login', error))
+        try{
+            const response = await axios.post(`http://localhost:9090/api/auth/login`, credentials);  
+            setToken(response.data.token);
+        } catch(error){
+            console.error('Error login', error);
+        }
+        
     }
 
     const handleChange = (event) =>{

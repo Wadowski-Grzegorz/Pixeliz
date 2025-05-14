@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import axios from 'axios';
-
+import { useAuth } from "./AuthProvider";
 
 const Register = () =>{
+    const { setToken } = useAuth();
 
     const [credentials, setCredentials] = useState({
         name: "",
@@ -14,7 +15,7 @@ const Register = () =>{
     const handleSubmit = (event) =>{
         event.preventDefault();
         axios.post(`http://localhost:9090/api/auth/register`, credentials)
-            .then(response => console.log(response))
+            .then(response => setToken(response.data.token))
             .catch(error => console.error('Error creating an user.', error));
     }
 
