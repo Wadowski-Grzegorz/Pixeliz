@@ -114,7 +114,7 @@ const PixelDraw = () => {
         try {
             const response = await axios.post('http://localhost:9090/api/drawing', 
                 {
-                    pixels: JSON.stringify(pixels),
+                    pixels: pixels,
                     name: drawingName,
                     size_x: row,
                     size_y: column
@@ -134,7 +134,7 @@ const PixelDraw = () => {
         try {
             const response = await axios.get(`http://localhost:9090/api/drawing/${id}`);
             const data = response.data;
-            setPixels(JSON.parse(data.pixels));
+            setPixels(data.pixels);
             setDrawingName(data.name);
             setRow(data.size_x);
             setColumn(data.size_y);
