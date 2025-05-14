@@ -5,7 +5,7 @@ import axios from 'axios';
 const Register = () =>{
 
     const [credentials, setCredentials] = useState({
-        username: "",
+        name: "",
         login: "",
         email: "",
         password: ""
@@ -30,8 +30,8 @@ const Register = () =>{
                 <label>
                     Username:
                     <input  type="text"
-                            name="username"
-                            value={credentials.username}
+                            name="name"
+                            value={credentials.name}
                             onChange={handleChange}/>
                 </label>
                 <label>
