@@ -63,7 +63,7 @@ class UserDrawingRoleServiceTest {
         drawing = Drawing
                 .builder()
                 .id(1L)
-                .pixels("[\"white\",\"white\"]")
+                .pixels(List.of("#FFFFFF", "#FFFFFF"))
                 .name("my drawing")
                 .size_x(1)
                 .size_y(2)

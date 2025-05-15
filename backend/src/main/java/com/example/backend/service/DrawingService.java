@@ -65,7 +65,7 @@ public class DrawingService {
         if(drawingUpdate.getName() != null){
             drawing.setName(drawingUpdate.getName());
         }
-        if(drawingUpdate.getPixels() != null && !drawingUpdate.getPixels().isBlank()){
+        if(drawingUpdate.getPixels() != null && !drawingUpdate.getPixels().isEmpty()){
             drawing.setPixels(drawingUpdate.getPixels());
         }
         return drawingRepository.save(drawing);

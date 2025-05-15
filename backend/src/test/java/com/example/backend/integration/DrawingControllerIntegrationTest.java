@@ -38,7 +38,7 @@ class DrawingControllerIntegrationTest {
         drawingRepository.deleteAll();
         drawing = Drawing
                 .builder()
-                .pixels("[\"white\",\"white\"]")
+                .pixels(List.of("#FFFFFF", "#FFFFFF"))
                 .name("my drawing")
                 .size_x(1)
                 .size_y(2)
@@ -51,7 +51,7 @@ class DrawingControllerIntegrationTest {
         // given
         DrawingDTO dDto = DrawingDTO
                 .builder()
-                .pixels("[\"white\",\"white\"]")
+                .pixels(List.of("#FFFFFF", "#FFFFFF"))
                 .name("my new drawing")
                 .size_x(1)
                 .size_y(2)
@@ -89,7 +89,7 @@ class DrawingControllerIntegrationTest {
         // precondition
         Drawing drawing2 = Drawing
                 .builder()
-                .pixels("[\"red\",\"red\"]")
+                .pixels(List.of("#FFFFFF", "#FFFFFF"))
                 .name("second drawing")
                 .size_x(1)
                 .size_y(2)
@@ -111,7 +111,7 @@ class DrawingControllerIntegrationTest {
         Long drawingId = drawing.getId();
         DrawingDTO dDto = DrawingDTO
                 .builder()
-                .pixels("[\"brown\",\"brown\"]")
+                .pixels(List.of("#FFFFFF", "#FFFFFF"))
                 .name("my updated drawing")
                 .build();
         Drawing updatedDrawing = Drawing.builder()

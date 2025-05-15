@@ -55,7 +55,7 @@ class DrawingControllerTest {
         drawing = Drawing
                 .builder()
                 .id(1L)
-                .pixels("[\"white\",\"white\"]")
+                .pixels(List.of("#FFFFFF", "#FFFFFF"))
                 .name("my drawing")
                 .size_x(1)
                 .size_y(2)
@@ -72,7 +72,7 @@ class DrawingControllerTest {
     void createDrawing_ValidInput_ReturnsCreatedDrawing() throws Exception {
         // precondition
         DrawingDTO dDto = new DrawingDTO(
-                "[\"white\",\"white\"]",
+                List.of("#FFFFFF", "#FFFFFF"),
                 "my drawing",
                 1,
                 2,
@@ -95,7 +95,7 @@ class DrawingControllerTest {
     void createDrawing_InValidInput_ReturnsBadRequest() throws Exception {
         // precondition
         DrawingDTO dDto = new DrawingDTO(
-                "",
+                List.of("#FFFFFF", "#FFFFFF"),
                 null,
                 0,
                 0,
@@ -134,7 +134,7 @@ class DrawingControllerTest {
     @Test
     void getDrawings_ReturnsDrawings() throws Exception {
         // precondition
-        Drawing drawing2 = Drawing.builder().id(2L).pixels("[\"red\",\"red\"]").name("second drawing").size_x(1).size_y(2).build();
+        Drawing drawing2 = Drawing.builder().id(2L).pixels(List.of("#FFFFFF", "#FFFFFF")).name("second drawing").size_x(1).size_y(2).build();
         List<Drawing> drawings = List.of(drawing, drawing2);
         given(drawingService.getDrawings()).willReturn(drawings);
 
@@ -152,7 +152,7 @@ class DrawingControllerTest {
         Long drawingId = drawing.getId();
         DrawingDTO dDto = DrawingDTO
                 .builder()
-                .pixels("[\"brown\",\"brown\"]")
+                .pixels(List.of("#FFFFFF", "#FFFFFF"))
                 .name("my updated drawing")
                 .build();
         Drawing updatedDrawing = Drawing.builder()

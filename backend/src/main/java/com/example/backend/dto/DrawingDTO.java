@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.groups.Default;
 import lombok.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -13,8 +14,7 @@ import lombok.*;
 @NoArgsConstructor
 public class DrawingDTO {
     @NotNull(groups = {Default.class, Update.class})
-    @NotBlank(groups = {Default.class, Update.class})
-    private String pixels;
+    private List<String> pixels;
 
     @NotNull(groups = {Default.class, Update.class})
     private String name;

@@ -48,7 +48,7 @@ class DrawingServiceTest {
         drawing = Drawing
                 .builder()
                 .id(1L)
-                .pixels("[\"white\",\"white\"]")
+                .pixels(List.of("#FFFFFF", "#FFFFFF"))
                 .name("my drawing")
                 .size_x(1)
                 .size_y(2)
@@ -60,7 +60,7 @@ class DrawingServiceTest {
         // precondition
         User user = User.builder().id(1L).build();
         DrawingDTO dDto = new DrawingDTO(
-                "[\"white\",\"white\"]",
+                List.of("#FFFFFF", "#FFFFFF"),
                 "my drawing",
                 1,
                 2,
@@ -122,7 +122,7 @@ class DrawingServiceTest {
         Drawing drawing2 = Drawing
                 .builder()
                 .id(2L)
-                .pixels("[\"white\",\"white\", \"white\"]")
+                .pixels(List.of("#FFFFFF", "#FFFFFF"))
                 .name("my second drawing")
                 .size_x(1)
                 .size_y(3)
@@ -145,7 +145,7 @@ class DrawingServiceTest {
         Long id = 1L;
         DrawingDTO dDto = DrawingDTO
                 .builder()
-                .pixels("[\"brown\",\"brown\"]")
+                .pixels(List.of("#FFFFFF", "#FFFFFF"))
                 .name("my updated drawing")
                 .build();
         given(drawingRepository.findById(id)).willReturn(Optional.of(drawing));
@@ -157,7 +157,7 @@ class DrawingServiceTest {
         // verify
         verify(drawingRepository, times(1)).save(any(Drawing.class));
         assertThat(returnedDrawing.getId()).isEqualTo(id);
-        assertThat(returnedDrawing.getPixels()).isEqualTo("[\"brown\",\"brown\"]");
+        assertThat(returnedDrawing.getPixels()).isEqualTo(List.of("#FFFFFF", "#FFFFFF"));
         assertThat(returnedDrawing.getName()).isEqualTo("my updated drawing");
     }
 
