@@ -31,7 +31,7 @@ public class Drawing {
     private int size_y;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "drawing")
+    @OneToMany(mappedBy = "drawing", cascade = CascadeType.REMOVE, orphanRemoval = true)
     Set<UserDrawingRole> userDrawingRoles;
 
 

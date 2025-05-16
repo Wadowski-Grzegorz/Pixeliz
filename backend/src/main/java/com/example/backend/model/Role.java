@@ -35,6 +35,6 @@ public class Role {
     private boolean delete;
 
     @JsonIgnore
-    @OneToMany(mappedBy="role")
+    @OneToMany(mappedBy="role", orphanRemoval = true)
     private Set<UserDrawingRole> userDrawingRoles;
 }

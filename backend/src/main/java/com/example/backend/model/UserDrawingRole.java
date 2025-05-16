@@ -7,11 +7,12 @@ import org.antlr.v4.runtime.misc.NotNull;
 @Entity
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDrawingRole {
     @EmbeddedId
+    @EqualsAndHashCode.Include
     private UserDrawingKey id;
 
     @ManyToOne

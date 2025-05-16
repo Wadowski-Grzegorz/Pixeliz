@@ -38,7 +38,7 @@ public class User implements UserDetails{
     private String email;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     Set<UserDrawingRole> userDrawingRoles;
 
     // jwt
