@@ -21,7 +21,6 @@ public class DrawingService {
     private final UserService userService;
     private final RoleService roleService;
     private final UserDrawingRoleService userDrawingRoleService;
-    private final UserDrawingRoleRepository userDrawingRoleRepository;
 
     public DrawingService(
             DrawingRepository drawingRepository,
@@ -31,7 +30,6 @@ public class DrawingService {
         this.userService = userService;
         this.roleService = roleService;
         this.userDrawingRoleService = userDrawingRoleService;
-        this.userDrawingRoleRepository = userDrawingRoleRepository;
     }
 
     private interface Checker{
