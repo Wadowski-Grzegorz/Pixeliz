@@ -4,6 +4,7 @@ import com.example.backend.dto.AuthResponseDTO;
 import com.example.backend.dto.LoginDTO;
 import com.example.backend.dto.UserDTO;
 import com.example.backend.exception.InvalidDataException;
+import com.example.backend.exception.PermissionDeniedException;
 import com.example.backend.exception.UserAlreadyExistsException;
 import com.example.backend.exception.UserNotFoundException;
 import com.example.backend.model.SecurityRole;
@@ -31,10 +32,26 @@ public class UserService {
         this.authenticationManager = authenticationManager;
     }
 
+    private void checkUser(User user, String username){
+        User userCheck = getUserByUsername(username);
+        if(!user.equals(userCheck)){
+            throw new PermissionDeniedException();
+        }
+    }
+
     public User getUser(Long id){
         return userRepository
                 .findById(id)
                 .orElseThrow(() -> new UserNotFoundException(Map.of("id", id)));
+    }
+
+    public UserDTO getUserSummary(Long id){
+        User user = getUser(id);
+        return UserDTO
+                .builder()
+                .id(user.getId())
+                .name(user.getName())
+                .build();
     }
 
     public User getUserByName(String name){
@@ -54,7 +71,7 @@ public class UserService {
     }
 
     public AuthResponseDTO createUser(UserDTO userDTO){
-        User user = DTOtoUser(userDTO);
+        User user = dtoToUser(userDTO);
         user.setSecurityRole(SecurityRole.USER);
         verifyUserCredentials(user);
         userRepository.save(user);
@@ -90,14 +107,23 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public void deleteUser(Long id){
-        getUser(id);
+    public void deleteUser(Long id, String username, boolean isAdmin){
+        User user = getUser(id);
+
+        if(!isAdmin){
+            checkUser(user, username);
+        }
+
         userRepository.deleteById(id);
     }
 
-    public AuthResponseDTO updateUser(Long id, UserDTO userDTO){
+    public AuthResponseDTO updateUser(Long id, UserDTO userDTO, String username, boolean isAdmin){
         // update what is present
         User user = getUser(id);
+
+        if(!isAdmin){
+            checkUser(user, username);
+        }
 
         updateIfPresent(
                 userDTO.getName(),
@@ -158,7 +184,7 @@ public class UserService {
         }
     }
 
-    private User DTOtoUser(UserDTO userDTO){
+    private User dtoToUser(UserDTO userDTO){
         return User.builder()
                 .name(userDTO.getName())
                 .login(userDTO.getLogin())
@@ -167,8 +193,9 @@ public class UserService {
                 .build();
     }
 
-    private UserDTO UserToDTO(User user){
+    private UserDTO userToDTO(User user){
         return UserDTO.builder()
+                .id(user.getId())
                 .name(user.getName())
                 .login(user.getLogin())
                 .email(user.getEmail())

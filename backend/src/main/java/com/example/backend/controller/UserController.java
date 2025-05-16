@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,6 +62,15 @@ public class UserController {
             @PathVariable Long id){
         User user = userService.getUser(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/summary")
+    public ResponseEntity<UserDTO> getUserSummary(
+            @Parameter(description = "ID of user to be fetched")
+            @PathVariable Long id
+    ){
+        UserDTO userDTO = userService.getUserSummary(id);
+        return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
     @Operation(summary = "Get all users")
@@ -124,8 +134,14 @@ public class UserController {
     public ResponseEntity<AuthResponseDTO> updateUser(
             @Parameter(description = "ID of role to be fetched")
             @PathVariable Long id,
-            @RequestBody @Validated(UserDTO.Update.class) UserDTO userDTO){
-        AuthResponseDTO update = userService.updateUser(id, userDTO);
+            @RequestBody @Validated(UserDTO.Update.class) UserDTO userDTO,
+            Authentication authentication
+    ){
+        String username = authentication.getName();
+        boolean isAdmin = authentication.getAuthorities().stream()
+                        .anyMatch(r -> r.getAuthority().equals("ADMIN"));
+
+        AuthResponseDTO update = userService.updateUser(id, userDTO, username, isAdmin);
         return new ResponseEntity<>(update, HttpStatus.OK);
     }
 
@@ -148,8 +164,15 @@ public class UserController {
             )
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id){
-        userService.deleteUser(id);
+    public ResponseEntity<?> deleteUser(
+            @PathVariable Long id,
+            Authentication authentication
+    ){
+        String username = authentication.getName();
+        boolean isAdmin = authentication.getAuthorities().stream()
+                        .anyMatch(r -> r.getAuthority().equals("ADMIN"));
+
+        userService.deleteUser(id, username, isAdmin);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
