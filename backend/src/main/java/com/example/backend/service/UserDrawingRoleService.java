@@ -1,5 +1,6 @@
 package com.example.backend.service;
 
+import com.example.backend.dto.DrawingRoleDTO;
 import com.example.backend.dto.UserRoleDTO;
 import com.example.backend.exception.RelationNotFoundException;
 import com.example.backend.model.*;
@@ -56,6 +57,18 @@ public class UserDrawingRoleService {
         UserDrawingKey key = new UserDrawingKey(drawingId, userId);
         return userDrawingRoleRepository.findById(key)
                 .orElseThrow(() -> new RelationNotFoundException(Map.of("drawingId", drawingId, "userId", userId)));
+    }
+
+    public List<DrawingRoleDTO> getUserDrawings(Long userId) {
+        List<Object[]> rows = userDrawingRoleRepository.findDrawingAndRoles(userId);
+
+        return rows.stream()
+                .map(row ->{
+                    Drawing drawing = (Drawing) row[0];
+                    Role role = (Role) row[1];
+                    return new DrawingRoleDTO(drawing, role);
+                })
+                .collect(Collectors.toList());
     }
 
     public UserRoleDTO getUserFromDrawing(Long drawingId, Long userId){

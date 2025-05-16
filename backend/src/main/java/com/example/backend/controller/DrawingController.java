@@ -17,9 +17,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -59,8 +61,11 @@ public class DrawingController {
             )
     })
     @PostMapping()
-    public ResponseEntity<Drawing> createDrawing(@RequestBody @Valid DrawingDTO drawingDTO) {
-        Drawing drawing = drawingService.createDrawing(drawingDTO);
+    public ResponseEntity<Drawing> createDrawing(
+            @RequestBody @Valid DrawingDTO drawingDTO,
+            Principal principal) {
+        String username = principal.getName();
+        Drawing drawing = drawingService.createDrawing(drawingDTO, username);
         return new ResponseEntity<>(drawing, HttpStatus.CREATED);
     }
 
@@ -86,9 +91,13 @@ public class DrawingController {
             )
     })
     @GetMapping("/{id}")
-    public ResponseEntity<Drawing> getDrawing(@PathVariable Long id) {
-        Drawing drawing = drawingService.getDrawing(id);
-        return new ResponseEntity<>(drawing, HttpStatus.OK);
+    public ResponseEntity<DrawingRoleDTO> getDrawing(@PathVariable Long id, Authentication authentication) {
+        String username = authentication.getName();
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(r -> r.getAuthority().equals("ADMIN"));
+
+        DrawingRoleDTO drawingRoleDTO = drawingService.getDrawing(id, username, isAdmin);
+        return new ResponseEntity<>(drawingRoleDTO, HttpStatus.OK);
     }
 
     @Operation(summary = "Get all drawings")
@@ -144,8 +153,10 @@ public class DrawingController {
     @PutMapping("/{id}")
     public ResponseEntity<Drawing> putDrawing(
             @PathVariable Long id,
-            @RequestBody @Validated(DrawingDTO.Update.class) DrawingDTO drawingUpdate) {
-        Drawing drawing = drawingService.updateDrawing(id, drawingUpdate);
+            @RequestBody @Validated(DrawingDTO.Update.class) DrawingDTO drawingUpdate,
+            Principal principal) {
+        String username = principal.getName();
+        Drawing drawing = drawingService.updateDrawing(id, drawingUpdate, username);
         return new ResponseEntity<>(drawing, HttpStatus.OK);
     }
 
@@ -168,10 +179,21 @@ public class DrawingController {
             )
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteDrawing(@PathVariable Long id){
-        drawingService.deleteDrawing(id);
+    public ResponseEntity<?> deleteDrawing(@PathVariable Long id, Authentication authentication){
+        String username = authentication.getName();
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(r -> r.getAuthority().equals("ADMIN"));
+        drawingService.deleteDrawing(id, username, isAdmin);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+
+    @GetMapping("/me")
+    public ResponseEntity<List<DrawingRoleDTO>> getUserDrawings(Principal principal) {
+        String username = principal.getName();
+        return new ResponseEntity<>(drawingService.getUserDrawings(username), HttpStatus.OK);
+    }
+
 
 
     @Operation(
@@ -208,9 +230,11 @@ public class DrawingController {
     })
     @PostMapping("/{id}/user")
     public ResponseEntity<?> addUserToDrawing(@PathVariable Long id,
-                                              @RequestBody @Valid AddUserToDrawingDTO addUserToDrawingDTO
+                                              @RequestBody @Valid AddUserToDrawingDTO addUserToDrawingDTO,
+                                              Principal principal
     ){
-        UserDrawingRole relation = drawingService.addUserToDrawing(id, addUserToDrawingDTO);
+        String username = principal.getName();
+        UserDrawingRole relation = drawingService.addUserToDrawing(id, addUserToDrawingDTO, username);
         return new ResponseEntity<>(relation, HttpStatus.CREATED);
     }
 
@@ -306,8 +330,13 @@ public class DrawingController {
             @PathVariable Long id,
             @Parameter(description = "ID of user")
             @PathVariable Long userId,
-            @RequestBody @Valid UpdateUserDrawingRoleDTO updateUserDrawingRoleDTO){
-        return new ResponseEntity<>(drawingService.updateUserDrawingRole(userId, id, updateUserDrawingRoleDTO), HttpStatus.OK);
+            @RequestBody @Valid UpdateUserDrawingRoleDTO updateUserDrawingRoleDTO,
+            Principal principal
+    ){
+        String username = principal.getName();
+        return new ResponseEntity<>(
+                drawingService.updateUserDrawingRole(userId, id, updateUserDrawingRoleDTO, username),
+                HttpStatus.OK);
     }
 
     @Operation(summary = "Delete specific UserDrawingRole")
@@ -333,8 +362,11 @@ public class DrawingController {
             @Parameter(description = "ID of drawing")
             @PathVariable Long id,
             @Parameter(description = "ID of user")
-            @PathVariable Long userId){
-        drawingService.deleteUserDrawingRole(id, userId);
+            @PathVariable Long userId,
+            Principal principal
+    ){
+        String username = principal.getName();
+        drawingService.deleteUserDrawingRole(id, userId, username);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

@@ -43,6 +43,16 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException(Map.of("name", name)));
     }
 
+    public User getUserByEmail(String email){
+        return userRepository
+                .findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException(Map.of("email", email)));
+    }
+
+    public User getUserByUsername(String username){
+        return getUserByEmail(username);
+    }
+
     public AuthResponseDTO createUser(UserDTO userDTO){
         User user = DTOtoUser(userDTO);
         user.setSecurityRole(SecurityRole.USER);

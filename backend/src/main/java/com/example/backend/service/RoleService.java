@@ -32,4 +32,15 @@ public class RoleService {
                 .findByName(name)
                 .orElseThrow(() -> new RoleNotFoundException(Map.of("name", name)));
     }
+
+    public boolean canAdmin(Role role){ return role.isAdmin(); }
+
+    public boolean canRead(Role role){ return role.isRead(); }
+
+    public boolean canWrite(Role role){ return role.isWrite(); }
+
+    public boolean canDelete(Role role){
+        return role.isDelete();
+    }
+
 }
