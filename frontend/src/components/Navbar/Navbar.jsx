@@ -2,7 +2,7 @@ import React from 'react';
 import {useState} from 'react';
 import { Link } from 'react-router-dom';
 import PixelCreateForm from '../PixelDraw/PixelCreateForm';
-
+import { useAuth } from '../Auth/AuthProvider';
 
 function Navbar(){
     const [formSeen, setFormSeen] = useState(false);
@@ -10,6 +10,7 @@ function Navbar(){
         setFormSeen(!formSeen);
     };
 
+    const { token } = useAuth();
 
     return(
         <>
@@ -21,8 +22,13 @@ function Navbar(){
 
                 <div>
                     <Link to="/resources">Resources</Link>
-                    <Link to="/login">Login</Link>
-                    <Link to="/register">Register</Link>
+                    { token === null && (
+                        <>
+                            <Link to="/login">Login</Link>
+                            <Link to="/register">Register</Link>
+                        </>
+                    )}
+                    
                 </div>
             </nav>
 
