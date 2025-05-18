@@ -146,7 +146,7 @@ const PixelDraw = () => {
     }
 
     return(
-        <div className="pixel-draw" style={{position: 'relative'}}>
+        <div className="relative">
             <canvas 
                 ref={pixelsRef}
                 height={column * PIXEL_SIZE}
@@ -155,26 +155,14 @@ const PixelDraw = () => {
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
                 onMouseLeave={handleMouseUp}
-                style={{ 
-                    position: 'relative',
-                    top: 0,
-                    left: 0,
-                    zIndex: 0
-                 }}
+                className="relative top-0 left-0 z-0"
             />
 
             <canvas 
                 ref={gridRef}
                 height={column * PIXEL_SIZE}
                 width={row * PIXEL_SIZE}
-                style={{ 
-                    border: "1px solid black",
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    zIndex: 1,
-                    pointerEvents: 'none'
-                }}
+                className="absolute top-0 left-0 z-[1] pointer-events-none border border-black"
             />
             
             <div>

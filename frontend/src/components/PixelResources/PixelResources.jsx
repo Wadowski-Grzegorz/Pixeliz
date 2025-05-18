@@ -22,19 +22,21 @@ const PixelResources = () =>{
 
     return(
         <>
-            <div className="title">
-                <h1>Resources</h1>
+            <div className="flex flex-row gap-3">
+                <h1 className="font-bold">Resources</h1>
 
-                <button className="button-icon" onClick={fetchDrawings}>
+                <button onClick={fetchDrawings}>
                     <FontAwesomeIcon icon={faRotateRight} />
                 </button>
             </div>
 
-            <div className="resources">
+            <div className="flex flex-wrap gap-x-8 gap-y-4 px-4">
                 {
                     drawings.map((d) =>
-                        <Link to={`/drawing/${d.id}`} key={d.id} className="tile">
-                            <li>{d.name || "drawing"}</li>
+                        <Link to={`/drawing/${d.id}`} key={d.id} className="block">
+                            <li className="list-none flex items-center justify-center bg-[#CCCCCC] rounded-lg text-[#494446] w-25 h-25 p-lg truncate break-words hover:bg-[#9b9a9a]">
+                                {d.name || "drawing"}
+                            </li>
                         </Link>
                     )
                 }

@@ -10,7 +10,7 @@ function App() {
 
         <Navbar/>
 
-        <div className="app">
+        <div className="flex flex-col items-center justify-center">
           <MyRoutes/>
         </div>
 

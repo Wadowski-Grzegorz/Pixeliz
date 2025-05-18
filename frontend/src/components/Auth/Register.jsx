@@ -26,7 +26,7 @@ const Register = () =>{
 
     return(
         <>
-            <h1>Register</h1>
+            <h1 className="mb-2 font-bold">Register</h1>
             <form onSubmit={handleSubmit}>
                 <label>
                     Username:
@@ -56,7 +56,7 @@ const Register = () =>{
                             value={credentials.password}
                             onChange={handleChange}/>
                 </label>
-                <button type="submit">Submit</button>
+                <button type="submit" className="mt-3">Submit</button>
             </form>
         </>
     );
