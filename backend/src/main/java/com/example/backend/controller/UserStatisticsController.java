@@ -28,7 +28,7 @@ public class UserStatisticsController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> createUserStatistics(@PathVariable Long userId) {
+    public ResponseEntity<?> clickUserStatistics(@PathVariable Long userId) {
         userStatisticsService.clickToQueue(userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
