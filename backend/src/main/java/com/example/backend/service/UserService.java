@@ -9,6 +9,7 @@ import com.example.backend.exception.UserAlreadyExistsException;
 import com.example.backend.exception.UserNotFoundException;
 import com.example.backend.model.SecurityRole;
 import com.example.backend.model.User;
+import com.example.backend.model.UserStatistics;
 import com.example.backend.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,7 +26,12 @@ public class UserService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService, AuthenticationManager authenticationManager) {
+    public UserService(
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder,
+            JwtService jwtService,
+            AuthenticationManager authenticationManager
+    ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
@@ -72,8 +78,9 @@ public class UserService {
 
     public AuthResponseDTO createUser(UserDTO userDTO){
         User user = dtoToUser(userDTO);
-        user.setSecurityRole(SecurityRole.USER);
         verifyUserCredentials(user);
+        user.setUserStatistics(new UserStatistics());
+        user.setSecurityRole(SecurityRole.USER);
         userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
         return AuthResponseDTO
