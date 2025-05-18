@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import java.security.Principal;
+
 @RestController
 @RequestMapping("/api/user/{userId}/stats")
 @CrossOrigin(origins = "http://localhost:5173")
@@ -28,8 +30,9 @@ public class UserStatisticsController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> clickUserStatistics(@PathVariable Long userId) {
-        userStatisticsService.clickToQueue(userId);
+    public ResponseEntity<?> clickUserStatistics(@PathVariable Long userId, Principal principal) {
+        String username = principal.getName();
+        userStatisticsService.clickToQueue(userId, username);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

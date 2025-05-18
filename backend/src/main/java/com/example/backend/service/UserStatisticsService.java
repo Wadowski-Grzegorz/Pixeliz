@@ -1,12 +1,14 @@
 package com.example.backend.service;
 
 import com.example.backend.config.RabbitMQConfig;
+import com.example.backend.exception.PermissionDeniedException;
+import com.example.backend.model.User;
 import com.example.backend.model.UserStatistics;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.repository.UserStatisticsRepository;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
-
+import java.util.Map;
 
 @Service
 public class UserStatisticsService {
@@ -34,7 +36,11 @@ public class UserStatisticsService {
         userStatisticsRepository.increaseClickCount(userStatistics.getId());
     }
 
-    public void clickToQueue(Long userId){
+    public void clickToQueue(Long userId, String principal){
+        User user = userService.getUserByUsername(principal);
+        if(!user.getId().equals(userId)){
+            throw new PermissionDeniedException(Map.of("id", userId));
+        }
         rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, "routing.key", userId);
     }
 }
