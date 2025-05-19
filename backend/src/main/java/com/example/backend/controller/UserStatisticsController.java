@@ -11,7 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.security.Principal;
 
 @RestController
-@RequestMapping("/api/user/{userId}/stats")
+@RequestMapping("/api/user/stats")
 @CrossOrigin(origins = "http://localhost:5173")
 @Tag(name = "Statistics")
 @SecurityRequirement(name = "bearerAuth")
@@ -23,16 +23,16 @@ public class UserStatisticsController {
         this.userStatisticsService = userStatisticsService;
     }
 
-    @GetMapping("")
+    @GetMapping("/{userId}")
     public ResponseEntity<UserStatistics> getUserStatisticsByUserId(@PathVariable Long userId) {
         UserStatistics userStatistics = userStatisticsService.getUserStatisticsByUserId(userId);
         return new ResponseEntity<>(userStatistics, HttpStatus.OK);
     }
 
     @PostMapping("")
-    public ResponseEntity<?> clickUserStatistics(@PathVariable Long userId, Principal principal) {
+    public ResponseEntity<?> clickUserStatistics(Principal principal) {
         String username = principal.getName();
-        userStatisticsService.clickToQueue(userId, username);
+        userStatisticsService.clickToQueue(username);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

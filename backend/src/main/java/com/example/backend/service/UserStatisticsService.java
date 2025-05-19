@@ -18,7 +18,6 @@ public class UserStatisticsService {
 
     public UserStatisticsService(
             UserStatisticsRepository userStatisticsRepository,
-            UserRepository userRepository,
             UserService userService,
             RabbitTemplate rabbitTemplate
     ) {
@@ -36,11 +35,8 @@ public class UserStatisticsService {
         userStatisticsRepository.increaseClickCount(userStatistics.getId());
     }
 
-    public void clickToQueue(Long userId, String principal){
-        User user = userService.getUserByUsername(principal);
-        if(!user.getId().equals(userId)){
-            throw new PermissionDeniedException(Map.of("id", userId));
-        }
-        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, "routing.key", userId);
+    public void clickToQueue(String username){
+        User user = userService.getUserByUsername(username);
+        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, "routing.key", user.getId());
     }
 }

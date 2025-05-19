@@ -91,6 +91,7 @@ const PixelDraw = () => {
     };
 
     const handleMouseDown = (event) => {
+        clickDrawingStat();
         setIsDrawing(true);
         paintPixel(event);
     };
@@ -164,6 +165,16 @@ const PixelDraw = () => {
         }else{
             saveDrawing();
         }
+    }
+
+    const clickDrawingStat = async () => {
+        console.log('clicked');
+        try {
+            await axios.post('http://localhost:9090/api/user/stats');
+        } catch(error){
+            console.error('Error while sending click information:', error);
+        }
+        console.log('end');
     }
 
     return(
