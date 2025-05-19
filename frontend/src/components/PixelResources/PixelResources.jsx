@@ -9,7 +9,7 @@ const PixelResources = () =>{
     const [drawings, setDrawings] = useState([]);
 
     const fetchDrawings = () =>{
-        axios.get(`http://localhost:9090/api/drawing`)
+        axios.get(`http://localhost:9090/api/drawing/me`)
             .then(response =>{
                 setDrawings(response.data)
             })
@@ -32,10 +32,21 @@ const PixelResources = () =>{
 
             <div className="flex flex-wrap gap-x-8 gap-y-4 px-4">
                 {
-                    drawings.map((d) =>
-                        <Link to={`/drawing/${d.id}`} key={d.id} className="block">
+                    drawings.map((ob) =>
+                        <Link 
+                            to={`/drawing/${ob.drawing.id}`} 
+                            key={ob.drawing.id} 
+                            className="block"
+                            state={{
+                                pixels: ob.drawing.pixels,
+                                sizeX: ob.drawing.size_x,
+                                sizeY: ob.drawing.size_y,
+                                name: ob.drawing.name,
+                                id: ob.drawing.id
+                            }}
+                        >
                             <li className="list-none flex items-center justify-center bg-[#CCCCCC] rounded-lg text-[#494446] w-25 h-25 p-lg truncate break-words hover:bg-[#9b9a9a]">
-                                {d.name || "drawing"}
+                                {ob.drawing.name || ob.drawing.id}
                             </li>
                         </Link>
                     )

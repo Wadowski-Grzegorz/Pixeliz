@@ -133,11 +133,11 @@ const PixelDraw = () => {
         try {
             const response = await axios.get(`http://localhost:9090/api/drawing/${id}`);
             const data = response.data;
-            setPixels(data.pixels);
-            setDrawingName(data.name);
-            setRow(data.size_x);
-            setColumn(data.size_y);
-            setDrawingId(data.id);
+            setPixels(data.drawing.pixels);
+            setDrawingName(data.drawing.name);
+            setRow(data.drawing.size_x);
+            setColumn(data.drawing.size_y);
+            setDrawingId(data.drawing.id);
             setRedraw(true);
         } catch(error){
             console.error('Error while loading drawing:', error);
