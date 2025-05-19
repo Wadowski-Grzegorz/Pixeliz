@@ -3,6 +3,7 @@ import {useState} from 'react';
 import { Link } from 'react-router-dom';
 import PixelCreateForm from '../PixelDraw/PixelCreateForm';
 import { useAuth } from '../Auth/AuthProvider';
+import Modal from '../common/Modal';
 
 function Navbar(){
     const [formSeen, setFormSeen] = useState(false);
@@ -33,20 +34,9 @@ function Navbar(){
                 </div>
             </nav>
 
-            <div>
-                {
-                    formSeen && 
-                    (
-                        <>
-                            <div className="fixed w-screen h-screen backdrop-blur-sm z-[99] top-0 left-0" onClick={togglePop}/>
-                            <div className="fixed z-[101] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
-                                            bg-[#575757] border border=[#767944] rounded-lg p-4 text-[#b8adb2]">
-                                <PixelCreateForm togglePop={togglePop}/>
-                            </div>
-                        </>
-                    )
-                }
-            </div>
+            <Modal isOpen={formSeen} onClose={togglePop}>
+                <PixelCreateForm togglePop={togglePop}/>
+            </Modal>
         </>
     );
 }
