@@ -46,7 +46,7 @@ const PixelResources = () =>{
                             }}
                         >
                             <li className="list-none flex items-center justify-center bg-[#CCCCCC] rounded-lg text-[#494446] w-25 h-25 p-lg truncate break-words hover:bg-[#9b9a9a]">
-                                {ob.drawing.name || ob.drawing.id}
+                                {ob.drawing.name || "drawing"}
                             </li>
                         </Link>
                     )

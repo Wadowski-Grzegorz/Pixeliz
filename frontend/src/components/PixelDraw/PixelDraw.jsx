@@ -120,7 +120,21 @@ const PixelDraw = () => {
                 },
                 {headers: {"Content-Type": "application/json"}}
             );
-            console.log("Drawing saved:", response.data);
+            setDrawingId(response.data.id);
+        } catch(error){
+            console.error('Error while saving drawing:', error);
+        }
+    }
+
+    const updateDrawing = async (id) => {
+        try {
+            const response = await axios.put(`http://localhost:9090/api/drawing/${id}`, 
+                {
+                    pixels: pixels,
+                    name: drawingName
+                },
+                {headers: {"Content-Type": "application/json"}}
+            );
         } catch(error){
             console.error('Error while saving drawing:', error);
         }
@@ -141,6 +155,14 @@ const PixelDraw = () => {
             setRedraw(true);
         } catch(error){
             console.error('Error while loading drawing:', error);
+        }
+    }
+
+    const saveOrUpdateDrawing = async () => {
+        if(drawingId > 0){
+            updateDrawing(drawingId);
+        }else{
+            saveDrawing();
         }
     }
 
@@ -179,7 +201,7 @@ const PixelDraw = () => {
                             value={drawingName}
                             onChange={(e) => setDrawingName(e.target.value)}
                             placeholder="Name your drawing"/>
-                    <button onClick={saveDrawing}>Save drawing</button>
+                    <button onClick={saveOrUpdateDrawing}>Save drawing</button>
                 </div>
                 
                 <div>
