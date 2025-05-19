@@ -1,7 +1,6 @@
 import {useEffect, useRef, useState} from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
-import './PixelDraw.css';
 
 const PIXEL_SIZE = 15;
 const COLORS = ['#964B00', '#6B1D8C']

@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+@import "tailwindcss";
+
+body {
+  @apply bg-[#282622] m-0 h-full text-[14px] text-[#9F9399] font-[inter];
+}
+
+a{
+    @apply text-[#9F9399] font-bold
+}
+
+button{
+    @apply text-[#9F9399] cursor-pointer border border-[#767944] rounded-md px-1 py-0.5 inline-flex items-center justify-center self-center
+}
+
+form{
+    @apply flex flex-col mb-20
+}
+
+label{
+    @apply flex flex-col my-2
+}
+
+input{
+    @apply bg-[#CCCCCC] rounded-sm mt-1 p-1
+}
+
+h1{
+    @apply text-xl
+}
