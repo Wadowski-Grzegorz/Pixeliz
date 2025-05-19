@@ -30,6 +30,7 @@ const Login = () =>{
 
     return(
         <>
+        <div className="flex flex-col items-center relative left-[50%] translate-x-[-50%]">
             <h1 className="mb-2 font-bold">Login</h1>
             <form onSubmit={handleSubmit}>
                 <label>
@@ -55,6 +56,7 @@ const Login = () =>{
                 </label>
                 <button type="submit" className="mt-3">Submit</button>
             </form>
+        </div>
         </>
     );
 }

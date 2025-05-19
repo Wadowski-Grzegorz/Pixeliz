@@ -9,10 +9,7 @@ function App() {
       <AuthProvider>
 
         <Navbar/>
-
-        <div className="flex flex-col items-center justify-center">
-          <MyRoutes/>
-        </div>
+        <MyRoutes/>
 
       </AuthProvider>
     </BrowserRouter>
