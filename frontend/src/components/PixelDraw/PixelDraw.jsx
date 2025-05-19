@@ -1,6 +1,8 @@
-import {useEffect, useRef, useState} from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
+import { useAuth } from '../Auth/AuthProvider';
 import axios from 'axios';
+import Modal from "../common/Modal"
 
 const PIXEL_SIZE = 15;
 const COLORS = ['#964B00', '#6B1D8C']
@@ -12,6 +14,7 @@ const PixelDraw = () => {
 
     const location = useLocation();
     const { id } = useParams();
+    const { token } = useAuth();
 
     const [row, setRow] = useState(location.state?.sizeX || 30);
     const [column, setColumn] = useState(location.state?.sizeY || 30);
@@ -24,6 +27,8 @@ const PixelDraw = () => {
     const [drawingName, setDrawingName] = useState("");
 
     const [redraw, setRedraw] = useState(false);
+
+    const [modalSave, setModalSave] = useState(false);
 
     useEffect(() => {
         const ctx = pixelsRef.current.getContext("2d");
@@ -91,7 +96,9 @@ const PixelDraw = () => {
     };
 
     const handleMouseDown = (event) => {
-        clickDrawingStat();
+        if(token){
+            clickDrawingStat();
+        }
         setIsDrawing(true);
         paintPixel(event);
     };
@@ -160,6 +167,11 @@ const PixelDraw = () => {
     }
 
     const saveOrUpdateDrawing = async () => {
+        if(!token){
+            toggleModalSave();
+            return;
+        }
+
         if(drawingId > 0){
             updateDrawing(drawingId);
         }else{
@@ -175,53 +187,53 @@ const PixelDraw = () => {
         }
     }
 
-    return(
-        <div className="relative">
-            <canvas 
-                ref={pixelsRef}
-                height={column * PIXEL_SIZE}
-                width={row * PIXEL_SIZE}
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-                onMouseLeave={handleMouseUp}
-                className="relative top-0 left-0 z-0"
-            />
+    const toggleModalSave = () =>{
+        setModalSave(!modalSave);
+    }
 
-            <canvas 
-                ref={gridRef}
-                height={column * PIXEL_SIZE}
-                width={row * PIXEL_SIZE}
-                className="absolute top-0 left-0 z-[1] pointer-events-none border border-black"
-            />
+    return(
+        <div className="flex flex-col items-center justify-center">
+            <div className="relative">
+                <canvas 
+                    ref={pixelsRef}
+                    height={column * PIXEL_SIZE}
+                    width={row * PIXEL_SIZE}
+                    onMouseDown={handleMouseDown}
+                    onMouseMove={handleMouseMove}
+                    onMouseUp={handleMouseUp}
+                    onMouseLeave={handleMouseUp}
+                    className="relative top-0 left-0 z-0"
+                />
+
+                <canvas 
+                    ref={gridRef}
+                    height={column * PIXEL_SIZE}
+                    width={row * PIXEL_SIZE}
+                    className="absolute top-0 left-0 z-[1] pointer-events-none"
+                />
+            </div>
             
-            <div>
+            <div className="flex flex-col absolute right-0">
                 {COLORS.map((color) => (
-                    <button key={color} onClick={() => changeColor(color)}>
-                        im color
+                    <button 
+                        key={color} 
+                        onClick={() => changeColor(color)}
+                        style={{ backgroundColor: color }}
+                        className="!border-black !rounded-none w-8 h-8 !px-0 !py-0">
                     </button>
                 ))}
             </div>
 
-            <div>
-                <div>
-                    <input
-                            type="text"
-                            value={drawingName}
-                            onChange={(e) => setDrawingName(e.target.value)}
-                            placeholder="Name your drawing"/>
-                    <button onClick={saveOrUpdateDrawing}>Save drawing</button>
-                </div>
-                
-                <div>
-                    <input 
-                        type="number" 
-                        value={drawingId}
-                        onChange={(e) => setDrawingId(e.target.value)}
-                        placeholder="Enter drawing id"/>
-                    <button onClick={() => loadDrawing(drawingId)}>Load drawing</button>
-                </div>
+            <div className="flex flex-row mt-2 gap-1">
+                <input
+                        type="text"
+                        value={drawingName}
+                        onChange={(e) => setDrawingName(e.target.value)}
+                        className="!mt-0"
+                        placeholder="Name your drawing"/>
+                <button onClick={saveOrUpdateDrawing}>Save drawing</button>
             </div>
+            <Modal isOpen={modalSave} onClose={toggleModalSave}>Please log in to save</Modal>
         </div>
     );
 }

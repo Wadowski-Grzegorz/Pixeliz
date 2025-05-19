@@ -26,6 +26,7 @@ const Register = () =>{
 
     return(
         <>
+        <div className="flex flex-col items-center relative left-[50%] translate-x-[-50%]">
             <h1 className="mb-2 font-bold">Register</h1>
             <form onSubmit={handleSubmit}>
                 <label>
@@ -58,6 +59,7 @@ const Register = () =>{
                 </label>
                 <button type="submit" className="mt-3">Submit</button>
             </form>
+        </div>
         </>
     );
 }

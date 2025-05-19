@@ -15,7 +15,7 @@ button{
 }
 
 form{
-    @apply flex flex-col mb-20
+    @apply flex flex-col
 }
 
 label{
@@ -23,7 +23,7 @@ label{
 }
 
 input{
-    @apply bg-[#CCCCCC] rounded-sm mt-1 p-1
+    @apply bg-[#CCCCCC] rounded-sm mt-1 p-1 text-[#2f2a2a]
 }
 
 h1{
