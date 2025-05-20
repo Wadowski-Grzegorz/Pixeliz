@@ -3,6 +3,7 @@ import { useLocation, useParams } from 'react-router-dom';
 import { useAuth } from '../Auth/AuthProvider';
 import axios from 'axios';
 import Modal from "../common/Modal"
+import RoleAdd from '../Roles/RoleAdd'
 
 const PIXEL_SIZE = 15;
 const COLORS = ['#964B00', '#6B1D8C']
@@ -192,7 +193,7 @@ const PixelDraw = () => {
     }
 
     return(
-        <div className="flex flex-col items-center justify-center">
+        <div className="flex flex-col items-center justify-center relative">
             <div className="relative">
                 <canvas 
                     ref={pixelsRef}
@@ -233,7 +234,13 @@ const PixelDraw = () => {
                         placeholder="Name your drawing"/>
                 <button onClick={saveOrUpdateDrawing}>Save drawing</button>
             </div>
+
             <Modal isOpen={modalSave} onClose={toggleModalSave}>Please log in to save</Modal>
+            { token && (
+                <div className="mt-10">
+                    <RoleAdd drawingId={drawingId}/>
+                </div>
+            )}
         </div>
     );
 }

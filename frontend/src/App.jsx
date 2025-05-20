@@ -7,10 +7,10 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-
-        <Navbar/>
-        <MyRoutes/>
-
+        <div>
+          <Navbar/>
+          <MyRoutes/>
+        </div>
       </AuthProvider>
     </BrowserRouter>
   );
