@@ -4,6 +4,7 @@ import { useAuth } from '../Auth/AuthProvider';
 import axios from 'axios';
 import Modal from "../common/Modal"
 import RoleAdd from '../Roles/RoleAdd'
+import Contributors from '../Roles/Contributors'
 
 const PIXEL_SIZE = 15;
 const COLORS = ['#964B00', '#6B1D8C']
@@ -30,6 +31,7 @@ const PixelDraw = () => {
     const [redraw, setRedraw] = useState(false);
 
     const [modalSave, setModalSave] = useState(false);
+    const [addedFlag, setAddedFlag] = useState(0);
 
     useEffect(() => {
         const ctx = pixelsRef.current.getContext("2d");
@@ -188,8 +190,12 @@ const PixelDraw = () => {
         }
     }
 
-    const toggleModalSave = () =>{
+    const toggleModalSave = () => {
         setModalSave(!modalSave);
+    }
+
+    const incAddedFlag = () => {
+        setAddedFlag(prev => prev + 1);
     }
 
     return(
@@ -225,20 +231,30 @@ const PixelDraw = () => {
                 ))}
             </div>
 
-            <div className="flex flex-row mt-2 gap-1">
-                <input
+            <div className="flex flex-col mt-2 gap-1">
+                <div className="flex flex-row gap-2 pb-1">
+                    <input
                         type="text"
                         value={drawingName}
                         onChange={(e) => setDrawingName(e.target.value)}
                         className="!mt-0"
                         placeholder="Name your drawing"/>
-                <button onClick={saveOrUpdateDrawing}>Save drawing</button>
+                    <button onClick={saveOrUpdateDrawing}>Save drawing</button>
+                </div>
+            
+                { token && (
+                    <div className="border-t-1 border-myBack pt-2">
+                        <RoleAdd drawingId={drawingId} incAddedFlag={incAddedFlag}/>
+                    </div>
+                )}
             </div>
 
             <Modal isOpen={modalSave} onClose={toggleModalSave}>Please log in to save</Modal>
             { token && (
-                <div className="mt-10">
-                    <RoleAdd drawingId={drawingId}/>
+                <div className="flex justify-between w-full mt-30 px-5 gap-5">
+                    <div className="flex flex-row items-center">
+                        <Contributors drawingId={drawingId} reload={addedFlag}/>
+                    </div>
                 </div>
             )}
         </div>

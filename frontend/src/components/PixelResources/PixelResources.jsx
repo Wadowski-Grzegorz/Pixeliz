@@ -22,10 +22,10 @@ const PixelResources = () =>{
 
     return(
         <>
-            <div className="flex flex-row justify-center gap-3 mb-5 mt-5">
+            <div className="flex flex-row justify-center gap-3 mb-5">
                 <h1 className="font-bold">Resources</h1>
 
-                <button onClick={fetchDrawings}>
+                <button onClick={fetchDrawings} className="border-none">
                     <FontAwesomeIcon icon={faRotateRight} />
                 </button>
             </div>
