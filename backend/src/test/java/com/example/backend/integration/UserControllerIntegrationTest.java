@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -51,6 +54,13 @@ class UserControllerIntegrationTest {
                 .securityRole(SecurityRole.USER)
                 .build();
         userRepository.save(user);
+
+        var auth = new UsernamePasswordAuthenticationToken(
+                user.getUsername(),
+                null,
+                List.of(new SimpleGrantedAuthority("ROLE_USER"))
+        );
+        SecurityContextHolder.getContext().setAuthentication(auth);
     }
 
     @Test
@@ -104,12 +114,13 @@ class UserControllerIntegrationTest {
     @Test
     void updateUser_ValidInput_ReturnsToken() throws Exception {
         // precondition
-        UserDTO uDto = new UserDTO(
-                "newName",
-                "newLogin",
-                "newEmail@email.com",
-                "newPassword"
-        );
+        UserDTO uDto = UserDTO
+                .builder()
+                .name("newName")
+                .login("newLogin")
+                .email("newEmail@email.com")
+                .password("newPassword")
+                .build();
 
         // action
         ResultActions response = mockMvc.perform(put("/api/user/{id}", user.getId())
@@ -124,12 +135,13 @@ class UserControllerIntegrationTest {
     @Test
     void updateUser_IdDoesNotExists_ReturnsNotFound() throws Exception {
         // precondition
-        UserDTO uDto = new UserDTO(
-                "newName",
-                "newLogin",
-                "newEmail@email.com",
-                "newPassword"
-        );
+        UserDTO uDto = UserDTO
+                .builder()
+                .name("newName")
+                .login("newLogin")
+                .email("newEmail@email.com")
+                .password("newPassword")
+                .build();
         Long invalidId = 100L;
 
         // action
@@ -145,12 +157,13 @@ class UserControllerIntegrationTest {
     @Test
     void updateUser_NameExists_ReturnsConflict() throws Exception {
         // precondition
-        UserDTO uDto = new UserDTO(
-                user.getName(),
-                "newLogin",
-                "newEmail@email.com",
-                "newPassword"
-        );
+        UserDTO uDto = UserDTO
+                .builder()
+                .name(user.getName())
+                .login("newLogin")
+                .email("newEmail@email.com")
+                .password("newPassword")
+                .build();
         Long id = user.getId();
 
         // action
@@ -166,12 +179,13 @@ class UserControllerIntegrationTest {
     @Test
     void updateUser_LoginExists_ReturnsConflict() throws Exception {
         // precondition
-        UserDTO uDto = new UserDTO(
-                "newName",
-                user.getLogin(),
-                "newEmail@email.com",
-                "newPassword"
-        );
+        UserDTO uDto = UserDTO
+                .builder()
+                .name("newName")
+                .login(user.getLogin())
+                .email("newEmail@email.com")
+                .password("newPassword")
+                .build();
         Long id = user.getId();
 
         // action
@@ -187,12 +201,13 @@ class UserControllerIntegrationTest {
     @Test
     void updateUser_EmailExists_ReturnsConflict() throws Exception {
         // precondition
-        UserDTO uDto = new UserDTO(
-                "newName",
-                "newLogin",
-                user.getEmail(),
-                "newPassword"
-        );
+        UserDTO uDto = UserDTO
+                .builder()
+                .name("newName")
+                .login("newLogin")
+                .email(user.getEmail())
+                .password("newPassword")
+                .build();
         Long id = user.getId();
 
         // action

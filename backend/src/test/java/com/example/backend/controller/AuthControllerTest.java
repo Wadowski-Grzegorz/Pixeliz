@@ -42,12 +42,13 @@ class AuthControllerTest {
     @Test
     void register_ValidInput_ReturnsToken() throws Exception{
         // precondition
-        UserDTO uDto = new UserDTO(
-                "Jamal",
-                "Jamalito",
-                "jamal@mail.com",
-                "jamalpass"
-        );
+        UserDTO uDto = UserDTO
+                .builder()
+                .name("Jamal")
+                .login("Jamalito")
+                .email("jamal@mail.com")
+                .password("jamalpass")
+                .build();
         AuthResponseDTO authDto = new AuthResponseDTO("I am a token");
         given(userService.createUser(any(UserDTO.class))).willReturn(authDto);
 

@@ -19,8 +19,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -59,23 +58,24 @@ class DrawingServiceTest {
     void createDrawing_ValidDTO_ReturnsCreatedDrawing() {
         // precondition
         User user = User.builder().id(1L).build();
-        DrawingDTO dDto = new DrawingDTO(
-                List.of("#FFFFFF", "#FFFFFF"),
-                "my drawing",
-                1,
-                2,
-                user.getId()
-        );
+        DrawingDTO dDto =
+                DrawingDTO
+                        .builder()
+                        .pixels(List.of("#FFFFFF", "#FFFFFF"))
+                        .name("my drawing")
+                        .size_x(1)
+                        .size_y(2)
+                        .build();
         Role role = Role.builder().id(1L).name("owner").build();
         UserDrawingRole udr = new UserDrawingRole();
 
-        given(userService.getUser(user.getId())).willReturn(user);
-        given(roleService.getRole(role.getName())).willReturn(role);
+        given(userService.getUserByUsername(anyString())).willReturn(user);
+        given(roleService.getRole(anyString())).willReturn(role);
         given(drawingRepository.save(any(Drawing.class))).willReturn(drawing);
         given(userDrawingRoleService.createUserDrawingRole(eq(user), any(Drawing.class), eq(role))).willReturn(udr);
 
         // action
-        Drawing returnedDrawing = drawingService.createDrawing(dDto);
+        Drawing returnedDrawing = drawingService.createDrawing(dDto, "username");
 
         // verify
         verify(drawingRepository, times(1)).save(any(Drawing.class));
@@ -148,11 +148,17 @@ class DrawingServiceTest {
                 .pixels(List.of("#FFFFFF", "#FFFFFF"))
                 .name("my updated drawing")
                 .build();
+        User user = User.builder().id(1L).build();
+        Role role = Role.builder().id(1L).build();
+        UserDrawingRole udr = new UserDrawingRole(user, drawing, role);
         given(drawingRepository.findById(id)).willReturn(Optional.of(drawing));
-        given(drawingRepository.save(drawing)).willReturn(drawing);
+        given(drawingRepository.save(any(Drawing.class))).willReturn(drawing);
+        given(userService.getUserByUsername(anyString())).willReturn(user);
+        given(userDrawingRoleService.getUserDrawingRole(id, user.getId())).willReturn(udr);
+        given(roleService.canWrite(any(Role.class))).willReturn(true);
 
         // action
-        Drawing returnedDrawing = drawingService.updateDrawing(id, dDto);
+        Drawing returnedDrawing = drawingService.updateDrawing(id, dDto, "username");
 
         // verify
         verify(drawingRepository, times(1)).save(any(Drawing.class));
@@ -165,10 +171,18 @@ class DrawingServiceTest {
     void deleteDrawing_IdExists() {
         // precondition
         Long id = 1L;
+        User user = User.builder().id(1L).build();
+        Role role = Role.builder().id(1L).build();
+        UserDrawingRole udr = new UserDrawingRole(user, drawing, role);
+
         given(drawingRepository.findById(id)).willReturn(Optional.of(drawing));
+        given(userService.getUserByUsername(anyString())).willReturn(user);
+        given(userDrawingRoleService.getUserDrawingRole(id, user.getId())).willReturn(udr);
+        given(roleService.canDelete(any(Role.class))).willReturn(true);
+
 
         // action
-        drawingService.deleteDrawing(id);
+        drawingService.deleteDrawing(1L, "username", false);
 
         // verify
         verify(drawingRepository, times(1)).deleteById(id);
@@ -178,10 +192,14 @@ class DrawingServiceTest {
     void deleteDrawing_IdDoesNotExists_ThrowsDrawingNotFoundException() {
         // precondition
         Long id = 100L;
+
         given(drawingRepository.findById(id)).willReturn(Optional.empty());
 
         // action
-        DrawingNotFoundException ex = assertThrows(DrawingNotFoundException.class, () -> drawingService.deleteDrawing(id));
+        DrawingNotFoundException ex = assertThrows(
+                DrawingNotFoundException.class,
+                () -> drawingService.deleteDrawing(100L, "username", false)
+        );
 
         // verify
         assertThat(ex.getCriteria())

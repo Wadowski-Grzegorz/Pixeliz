@@ -18,8 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -41,6 +40,8 @@ class UserServiceUnitTest {
     UserService userService;
 
     private User user;
+    private String username;
+    private boolean isAdmin;
 
 
     @BeforeEach
@@ -53,6 +54,8 @@ class UserServiceUnitTest {
                 .password("StrongPassword")
                 .email("jamal@email.com")
                 .build();
+        username = user.getUsername();
+        isAdmin = false;
     }
 
     @Test
@@ -116,12 +119,13 @@ class UserServiceUnitTest {
     @Test
     void createUser_ValidInput_CreatesUserAndReturnsToken() {
         // precondition
-        UserDTO uDto = new UserDTO(
-                "newName",
-                "newLogin",
-                "newEmail@email.com",
-                "newPassword"
-        );
+        UserDTO uDto = UserDTO
+                .builder()
+                .name("newName")
+                .login("newLogin")
+                .email("newEmail@email.com")
+                .password("newPassword")
+                .build();
         String token = "newToken";
         AuthResponseDTO authResponseDTO = new AuthResponseDTO(token);
         given(userRepository.save(any(User.class))).willReturn(user);
@@ -142,12 +146,13 @@ class UserServiceUnitTest {
     @Test
     void createUser_EmailExists_ThrowsUserAlreadyExistsException() {
         // precondition
-        UserDTO uDto = new UserDTO(
-                "unique",
-                "unique",
-                "used@email.com",
-                "UniquePassword"
-        );
+        UserDTO uDto = UserDTO
+                .builder()
+                .name("newName")
+                .login("newLogin")
+                .email(user.getEmail())
+                .password("newPassword")
+                .build();
         given(userRepository.findByEmail(anyString())).willReturn(Optional.of(user));
 
         // action
@@ -161,12 +166,13 @@ class UserServiceUnitTest {
     @Test
     void createUser_NameExists_ThrowsUserAlreadyExistsException() {
         // precondition
-        UserDTO uDto = new UserDTO(
-                "used",
-                "unique",
-                "unique@email.com",
-                "UniquePassword"
-        );
+        UserDTO uDto = UserDTO
+                .builder()
+                .name(user.getName())
+                .login("newLogin")
+                .email("newEmail@email.com")
+                .password("newPassword")
+                .build();
         given(userRepository.findByName(anyString())).willReturn(Optional.of(user));
 
         // action
@@ -180,12 +186,13 @@ class UserServiceUnitTest {
     @Test
     void createUser_LoginExists_ThrowsUserAlreadyExistsException() {
         // precondition
-        UserDTO uDto = new UserDTO(
-                "unique",
-                "used",
-                "unique@email.com",
-                "UniquePassword"
-        );
+        UserDTO uDto = UserDTO
+                .builder()
+                .name("newName")
+                .login(user.getLogin())
+                .email("newEmail@email.com")
+                .password("newPassword")
+                .build();
         given(userRepository.findByLogin(anyString())).willReturn(Optional.of(user));
 
         // action
@@ -222,11 +229,12 @@ class UserServiceUnitTest {
     @Test
     void deleteUser_IdExists_DeletesUser() {
         // precondition
-        Long id = 1L;
+        Long id = user.getId();
         given(userRepository.findById(id)).willReturn(Optional.of(user));
+        given(userRepository.findByEmail(eq(user.getEmail()))).willReturn(Optional.of(user));
 
         // action
-        userService.deleteUser(id);
+        userService.deleteUser(id, username, isAdmin);
 
         // verify
         verify(userRepository, times(1)).deleteById(id);
@@ -239,7 +247,8 @@ class UserServiceUnitTest {
         given(userRepository.findById(id)).willReturn(Optional.empty());
 
         // action
-        UserNotFoundException ex = assertThrows(UserNotFoundException.class, () -> userService.deleteUser(id));
+        UserNotFoundException ex = assertThrows(UserNotFoundException.class,
+                () -> userService.deleteUser(id, username, isAdmin));
 
         // verify
         assertThat(ex.getCriteria())
@@ -252,12 +261,13 @@ class UserServiceUnitTest {
     void updateUser_ValidInput_ReturnsToken() {
         // precondition
         Long id = 1L;
-        UserDTO uDto = new UserDTO(
-                "newName",
-                "newLogin",
-                "newEmail@email.com",
-                "newPassword"
-        );
+        UserDTO uDto = UserDTO
+                .builder()
+                .name("newName")
+                .login("newLogin")
+                .email("newEmail@email.com")
+                .password("newPassword")
+                .build();
         User newUser = User
                 .builder()
                 .name(uDto.getName())
@@ -267,14 +277,15 @@ class UserServiceUnitTest {
                 .build();
         String token = "I am a token";
         given(userRepository.findById(id)).willReturn(Optional.of(user));
-        given(userRepository.findByName("newName")).willReturn(Optional.empty());
-        given(userRepository.findByLogin("newLogin")).willReturn(Optional.empty());
-        given(userRepository.findByEmail("newEmail@email.com")).willReturn(Optional.empty());
+        given(userRepository.findByEmail(user.getEmail())).willReturn(Optional.of(user));
+        given(userRepository.findByName(uDto.getName())).willReturn(Optional.empty());
+        given(userRepository.findByLogin(uDto.getLogin())).willReturn(Optional.empty());
+        given(userRepository.findByEmail(uDto.getEmail())).willReturn(Optional.empty());
         given(userRepository.save(any(User.class))).willReturn(newUser);
         given(jwtService.generateToken(any(User.class))).willReturn(token);
 
         // action
-        AuthResponseDTO authToken = userService.updateUser(id, uDto);
+        AuthResponseDTO authToken = userService.updateUser(id, uDto, username, isAdmin);
 
         // verify
         assertThat(authToken.getToken()).isNotEmpty();
@@ -284,17 +295,19 @@ class UserServiceUnitTest {
     void updateUser_IdDoesNotExists_ThrowsUserNotFoundException() {
         // precondition
         Long id = 100L;
-        UserDTO uDto = new UserDTO(
-                "newName",
-                "newLogin",
-                "newEmail@email.com",
-                "newPassword"
-        );
+        UserDTO uDto = UserDTO
+                .builder()
+                .name("newName")
+                .login("newLogin")
+                .email("newEmail@email.com")
+                .password("newPassword")
+                .build();
 
         given(userRepository.findById(id)).willReturn(Optional.empty());
 
         // action
-        UserNotFoundException ex = assertThrows(UserNotFoundException.class, () -> userService.updateUser(id, uDto));
+        UserNotFoundException ex = assertThrows(UserNotFoundException.class,
+                () -> userService.updateUser(id, uDto, username, isAdmin));
 
         // verify
         assertThat(ex.getCriteria())
@@ -306,20 +319,22 @@ class UserServiceUnitTest {
     void updateUser_NameExists_ThrowsUserAlreadyExistsException() {
         // precondition
         Long id = 1L;
-        UserDTO uDto = new UserDTO(
-                "newName",
-                "newLogin",
-                "newEmail@email.com",
-                "newPassword"
-        );
+        UserDTO uDto = UserDTO
+                .builder()
+                .name(user.getName())
+                .login("newLogin")
+                .email("newEmail@email.com")
+                .password("newPassword")
+                .build();
 
         given(userRepository.findById(id)).willReturn(Optional.of(user));
-        given(userRepository.findByName(anyString())).willReturn(Optional.of(new User()));
+        given(userRepository.findByName(eq(uDto.getName()))).willReturn(Optional.of(new User()));
+        given(userRepository.findByEmail(eq(user.getEmail()))).willReturn(Optional.of(user));
 
         // action
         UserAlreadyExistsException ex = assertThrows(
                 UserAlreadyExistsException.class,
-                () -> userService.updateUser(id, uDto)
+                () -> userService.updateUser(id, uDto, username, isAdmin)
         );
 
         // verify
@@ -330,21 +345,23 @@ class UserServiceUnitTest {
     void updateUser_LoginExists_ThrowsUserAlreadyExistsException() {
         // precondition
         Long id = 1L;
-        UserDTO uDto = new UserDTO(
-                "newName",
-                "newLogin",
-                "newEmail@email.com",
-                "newPassword"
-        );
+        UserDTO uDto = UserDTO
+                .builder()
+                .name("newName")
+                .login(user.getLogin())
+                .email("newEmail@email.com")
+                .password("newPassword")
+                .build();
 
         given(userRepository.findById(id)).willReturn(Optional.of(user));
         given(userRepository.findByName(anyString())).willReturn(Optional.empty());
-        given(userRepository.findByLogin(anyString())).willReturn(Optional.of(new User()));
+        given(userRepository.findByLogin(eq(user.getLogin()))).willReturn(Optional.of(new User()));
+        given(userRepository.findByEmail(eq(user.getEmail()))).willReturn(Optional.of(user));
 
         // action
         UserAlreadyExistsException ex = assertThrows(
                 UserAlreadyExistsException.class,
-                () -> userService.updateUser(id, uDto)
+                () -> userService.updateUser(id, uDto, username, isAdmin)
         );
 
         // verify
@@ -355,22 +372,23 @@ class UserServiceUnitTest {
     void updateUser_EmailExists_ThrowsUserAlreadyExistsException() {
         // precondition
         Long id = 1L;
-        UserDTO uDto = new UserDTO(
-                "newName",
-                "newLogin",
-                "newEmail@email.com",
-                "newPassword"
-        );
+        UserDTO uDto = UserDTO
+                .builder()
+                .name("newName")
+                .login("newLogin")
+                .email(user.getEmail())
+                .password("newPassword")
+                .build();
 
         given(userRepository.findById(id)).willReturn(Optional.of(user));
         given(userRepository.findByName(anyString())).willReturn(Optional.empty());
         given(userRepository.findByLogin(anyString())).willReturn(Optional.empty());
-        given(userRepository.findByEmail(anyString())).willReturn(Optional.of(new User()));
+        given(userRepository.findByEmail(eq(user.getEmail()))).willReturn(Optional.of(user));
 
         // action
         UserAlreadyExistsException ex = assertThrows(
                 UserAlreadyExistsException.class,
-                () -> userService.updateUser(id, uDto)
+                () -> userService.updateUser(id, uDto, username, isAdmin)
         );
 
         // verify

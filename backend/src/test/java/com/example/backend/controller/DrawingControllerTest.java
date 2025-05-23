@@ -1,9 +1,6 @@
 package com.example.backend.controller;
 
-import com.example.backend.dto.AddUserToDrawingDTO;
-import com.example.backend.dto.DrawingDTO;
-import com.example.backend.dto.UpdateUserDrawingRoleDTO;
-import com.example.backend.dto.UserRoleDTO;
+import com.example.backend.dto.*;
 import com.example.backend.model.*;
 import com.example.backend.service.DrawingService;
 import com.example.backend.service.JwtService;
@@ -16,6 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -49,6 +49,7 @@ class DrawingControllerTest {
 
     private Drawing drawing;
     private UserDrawingRole udr;
+    private Role role;
 
     @BeforeEach
     void setUp() {
@@ -61,11 +62,20 @@ class DrawingControllerTest {
                 .size_y(2)
                 .build();
 
+        role = Role.builder().id(1L).build();
+
         udr = new UserDrawingRole(
                 User.builder().id(1L).name("Ahmed").securityRole(SecurityRole.USER).build(),
                 drawing,
-                Role.builder().id(1L).build()
+                role
         );
+
+        var auth = new UsernamePasswordAuthenticationToken(
+                "username",
+                null,
+                List.of(new SimpleGrantedAuthority("ROLE_USER"))
+        );
+        SecurityContextHolder.getContext().setAuthentication(auth);
     }
 
     @Test
@@ -78,10 +88,11 @@ class DrawingControllerTest {
                 2,
                 1L
         );
-        given(drawingService.createDrawing(any(DrawingDTO.class))).willReturn(drawing);
+
+        given(drawingService.createDrawing(any(DrawingDTO.class), anyString())).willReturn(drawing);
 
         // action
-        ResultActions response = mockMvc.perform(post("/api/drawing", drawing.getId())
+        ResultActions response = mockMvc.perform(post("/api/drawing")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dDto)));
 
@@ -94,16 +105,15 @@ class DrawingControllerTest {
     @Test
     void createDrawing_InValidInput_ReturnsBadRequest() throws Exception {
         // precondition
-        DrawingDTO dDto = new DrawingDTO(
-                List.of("#FFFFFF", "#FFFFFF"),
-                null,
-                0,
-                0,
-                0L
-        );
+        DrawingDTO dDto = DrawingDTO
+                .builder()
+                .name(null)
+                .size_x(0)
+                .size_y(0)
+                .build();
 
         // action
-        ResultActions response = mockMvc.perform(post("/api/drawing", drawing.getId())
+        ResultActions response = mockMvc.perform(post("/api/drawing")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dDto)));
 
@@ -112,22 +122,22 @@ class DrawingControllerTest {
                 .andExpect(jsonPath("$.details.pixels").exists())
                 .andExpect(jsonPath("$.details.name").exists())
                 .andExpect(jsonPath("$.details.size_x").exists())
-                .andExpect(jsonPath("$.details.size_y").exists())
-                .andExpect(jsonPath("$.details.authorId").exists());
+                .andExpect(jsonPath("$.details.size_y").exists());
 
     }
 
     @Test
     void getDrawing_IdExists_ReturnsDrawing() throws Exception {
         // precondition
-        given(drawingService.getDrawing(drawing.getId())).willReturn(drawing);
+        DrawingRoleDTO drDto = new DrawingRoleDTO(drawing, role);
+        given(drawingService.getDrawing(anyLong(), anyString(), anyBoolean())).willReturn(drDto);
 
         // action
         ResultActions response = mockMvc.perform(get("/api/drawing/{id}", drawing.getId()));
 
         // verify
         response.andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(drawing)));
+                .andExpect(content().json(objectMapper.writeValueAsString(drDto)));
 
     }
 
@@ -147,7 +157,7 @@ class DrawingControllerTest {
     }
 
     @Test
-    void putDrawing() throws Exception {
+    void putDrawing_ReturnsUpdatedDrawing() throws Exception {
         // precondition
         Long drawingId = drawing.getId();
         DrawingDTO dDto = DrawingDTO
@@ -160,7 +170,7 @@ class DrawingControllerTest {
                 .name(dDto.getName())
                 .build();
 
-        given(drawingService.updateDrawing(eq(drawingId), any(DrawingDTO.class))).willReturn(updatedDrawing);
+        given(drawingService.updateDrawing(eq(drawingId), any(DrawingDTO.class), anyString())).willReturn(updatedDrawing);
 
         // action
         ResultActions response = mockMvc.perform(put("/api/drawing/{id}", drawingId)
@@ -173,16 +183,16 @@ class DrawingControllerTest {
     }
 
     @Test
-    void deleteDrawing() throws Exception {
+    void deleteDrawing_ReturnsNoContent() throws Exception {
         // precondition
         Long drawingId = drawing.getId();
-        willDoNothing().given(drawingService).deleteDrawing(drawingId);
+        willDoNothing().given(drawingService).deleteDrawing(anyLong(), anyString(), anyBoolean());
 
         // action
         ResultActions response = mockMvc.perform(delete("/api/drawing/{id}", drawingId));
 
         // verify
-        verify(drawingService, times(1)).deleteDrawing(drawingId);
+        verify(drawingService, times(1)).deleteDrawing(anyLong(), anyString(), anyBoolean());
         response.andExpect(status().isNoContent());
     }
 
@@ -196,7 +206,7 @@ class DrawingControllerTest {
 
         AddUserToDrawingDTO dto = new AddUserToDrawingDTO(roleId, uName);
 
-        given(drawingService.addUserToDrawing(anyLong(), any(AddUserToDrawingDTO.class)))
+        given(drawingService.addUserToDrawing(anyLong(), any(AddUserToDrawingDTO.class), anyString()))
                 .willReturn(udr);
 
         // action
@@ -219,7 +229,7 @@ class DrawingControllerTest {
 
         AddUserToDrawingDTO dto = new AddUserToDrawingDTO(null, null);
 
-        given(drawingService.addUserToDrawing(anyLong(), any(AddUserToDrawingDTO.class)))
+        given(drawingService.addUserToDrawing(anyLong(), any(AddUserToDrawingDTO.class), anyString()))
                 .willReturn(udr);
 
         // action
@@ -286,7 +296,7 @@ class DrawingControllerTest {
         UpdateUserDrawingRoleDTO updateUserDrawingRoleDTO = new UpdateUserDrawingRoleDTO(updateRoleId);
         UserRoleDTO ur = new UserRoleDTO(userId, uName, updateRole);
 
-        given(drawingService.updateUserDrawingRole(userId, drawingId, updateUserDrawingRoleDTO)).willReturn(ur);
+        given(drawingService.updateUserDrawingRole(anyLong(), anyLong(), any(UpdateUserDrawingRoleDTO.class), anyString())).willReturn(ur);
 
         // action
         ResultActions response = mockMvc.perform(put("/api/drawing/{id}/user/{userId}", drawingId, userId)
@@ -322,10 +332,14 @@ class DrawingControllerTest {
         Long drawingId = drawing.getId();
         Long userId = udr.getUser().getId();
 
-        willDoNothing().given(drawingService).deleteUserDrawingRole(userId, drawingId);
+        willDoNothing().given(drawingService).deleteUserDrawingRole(anyLong(), anyLong(), anyString());
 
         // action
-        ResultActions response = mockMvc.perform(delete("/api/drawing/{id}/user/{userId}", drawingId, userId));
+        ResultActions response = mockMvc.perform(
+                delete("/api/drawing/{id}/user/{userId}",
+                        drawingId, userId
+                )
+        );
 
         // verify
         response.andExpect(status().isNoContent());
