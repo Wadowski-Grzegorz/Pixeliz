@@ -11,15 +11,21 @@ const Login = () =>{
         password: ""
     });
 
+    const [invalidCredentials, setInvalidCredentials] = useState(false);
+
     const handleSubmit = async (event) =>{
         event.preventDefault();
         try{
+            setInvalidCredentials(false);
             const response = await axios.post(`http://localhost:9090/api/auth/login`, credentials);  
             setToken(response.data.token);
         } catch(error){
-            console.error('Error login', error);
+            if(error.status === 401){
+                setInvalidCredentials(true);
+            } else{
+                console.error('Error login', error);
+            }
         }
-        
     }
 
     const handleChange = (event) =>{
@@ -46,6 +52,9 @@ const Login = () =>{
                             value={credentials.password}
                             onChange={handleChange}/>
                 </label>
+                { invalidCredentials && (
+                    <p className="text-error">Invalid credentials.</p>
+                )}
                 <button type="submit" className="mt-3">Submit</button>
             </form>
         </div>
