@@ -7,7 +7,6 @@ const Login = () =>{
     const { setToken } = useAuth();
 
     const [credentials, setCredentials] = useState({
-        login: "",
         email: "",
         password: ""
     });
@@ -33,13 +32,6 @@ const Login = () =>{
         <div className="flex flex-col items-center relative left-[50%] translate-x-[-50%]">
             <h1 className="mb-2 font-bold">Login</h1>
             <form onSubmit={handleSubmit}>
-                <label>
-                    Login:
-                    <input  type="text"
-                            name="login"
-                            value={credentials.login}
-                            onChange={handleChange}/>
-                </label>
                 <label>
                     Email:
                     <input  type="email"
