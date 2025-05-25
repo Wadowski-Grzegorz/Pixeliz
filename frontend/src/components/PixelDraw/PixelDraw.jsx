@@ -7,7 +7,7 @@ import RoleAdd from '../Roles/RoleAdd'
 import Contributors from '../Roles/Contributors'
 
 const PIXEL_SIZE = 15;
-const COLORS = ['#964B00', '#6B1D8C']
+const COLORS = ['#000000', '#FFFFFF', '#964B00', '#6B1D8C', '#1DEB1A', '#0C16C9', '#CADB0F', '#DB0416']
 
 const PixelDraw = () => {
     const contextRef = useRef(null);
@@ -226,15 +226,19 @@ const PixelDraw = () => {
                 />
             </div>
             
-            <div className="flex flex-col absolute right-0">
-                {COLORS.map((color) => (
-                    <button 
-                        key={color} 
-                        onClick={() => changeColor(color)}
-                        style={{ backgroundColor: color }}
-                        className="!border-black !rounded-none w-8 h-8 !px-0 !py-0">
-                    </button>
-                ))}
+            <div className="flex fixed items-center bottom-1 left-1/2 
+                            md:left-auto md:top-1/2 md:right-1 z-[2]  
+                            -translate-x-1/2 md:translate-x-0 md:-translate-y-1/2">
+                <div className="flex flex-row md:flex-col items-center justify-center">
+                    {COLORS.map((color) => (
+                        <button 
+                            key={color} 
+                            onClick={() => changeColor(color)}
+                            style={{ backgroundColor: color }}
+                            className="!border-black !rounded-none w-8 h-8 !px-0 !py-0">
+                        </button>
+                    ))}
+                </div>
             </div>
 
             <div className="flex flex-col mt-2 gap-1">
