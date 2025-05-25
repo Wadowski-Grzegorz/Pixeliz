@@ -74,6 +74,16 @@ public class UserController {
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
+    @GetMapping("/summary")
+    public ResponseEntity<UserDTO> getMySummary(
+    ){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        UserDTO userDTO = userService.getUserSummary(username);
+        return new ResponseEntity<>(userDTO, HttpStatus.OK);
+    }
+
     @Operation(summary = "Get all users")
     @ApiResponses({
             @ApiResponse(

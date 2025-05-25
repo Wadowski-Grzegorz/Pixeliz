@@ -60,6 +60,15 @@ public class UserService {
                 .build();
     }
 
+    public UserDTO getUserSummary(String username){
+        User user = getUserByUsername(username);
+        return UserDTO
+                .builder()
+                .id(user.getId())
+                .name(user.getName())
+                .build();
+    }
+
     public User getUserByName(String name){
         return userRepository
                 .findByName(name)

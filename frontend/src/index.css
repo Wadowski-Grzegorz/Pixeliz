@@ -3,15 +3,15 @@
 @import "tailwindcss";
 
 body {
-  @apply bg-[#282622] m-0 h-full text-[14px] text-[#9F9399] font-[inter];
+  @apply bg-myMainBack m-0 h-full text-[14px] text-myTextLight font-[inter];
 }
 
 a{
-    @apply text-[#9F9399] font-bold
+    @apply text-myTextLight font-bold
 }
 
 button{
-    @apply text-[#9F9399] cursor-pointer border border-[#767944] rounded-md px-1 py-0.5 inline-flex items-center justify-center self-center
+    @apply text-myTextLight cursor-pointer border border-myFinish rounded-md px-1 py-0.5 inline-flex items-center justify-center self-center
 }
 
 form{
@@ -23,7 +23,7 @@ label{
 }
 
 input{
-    @apply bg-[#CCCCCC] rounded-sm mt-1 p-1 text-[#2f2a2a]
+    @apply bg-myBack rounded-sm mt-1 p-1 text-myTextHeavy
 }
 
 h1{

@@ -5,6 +5,8 @@ const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
     const [token, setToken_] = useState(localStorage.getItem("token"));
+    const [userName, setUserName] = useState("");
+
     const setToken = (newToken) => {
         setToken_(newToken);
     }
@@ -13,18 +15,30 @@ const AuthProvider = ({ children }) => {
         if(token){
             axios.defaults.headers.common["Authorization"] = "Bearer " + token;
             localStorage.setItem('token', token);
+            setUserSummary();
         } else{
             delete axios.defaults.headers.common["Authorization"];
             localStorage.removeItem('token');
         }
     }, [token]);
 
+    const setUserSummary = async () => {
+        try{
+            const response = await axios.get('http://localhost:9090/api/user/summary');
+            setUserName(response.data.name);
+        }
+        catch(error){
+            console.error('Get user summary error', error);
+        }
+    }
+
     const contextValue = useMemo(
         () => ({
             token,
-            setToken
+            setToken,
+            userName
         }),
-        [token]
+        [token, userName]
     );
 
     return(
