@@ -35,6 +35,7 @@ const Register = () =>{
                     ...prev, 
                     [error.response.data.error]: true
                 }));
+                console.error('Error creating an user.', error)
             } else {
                 console.error('Error creating an user.', error)
             }
