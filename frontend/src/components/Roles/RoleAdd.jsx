@@ -10,6 +10,7 @@ const RoleAdd = ({ drawingId, incAddedFlag}) => {
     })
     const [modalOpen, setModalOpen] = useState(false);
     const [userNotFound, setUserNotFound] = useState(false);
+    const [rolePermissionDenyModerate, setRolePermissionDenyModerate] = useState(false);
 
 
     const getRoles = async () => {
@@ -24,14 +25,18 @@ const RoleAdd = ({ drawingId, incAddedFlag}) => {
     const addUserToDrawing = async () => {
         try {
             setUserNotFound(false);
+            setRolePermissionDenyModerate(false);
             await axios.post(`http://localhost:9090/api/drawing/${drawingId}/user`, 
                 formData,
                 {headers: {"Content-Type": "application/json"}}
             );
             incAddedFlag();
+            
         } catch(error){
             if(error.response && error.response.status === 404){
                 setUserNotFound(true);
+            } else if(error.response.status === 403 && error.response.data.details.admin == false){
+                setRolePermissionDenyModerate(true);
             } else{
                 console.error('Error adding user to drawing:', error);
             }
@@ -65,9 +70,14 @@ const RoleAdd = ({ drawingId, incAddedFlag}) => {
             <div>
                 <form onSubmit={addUser} className="flex flex-col gap-1">
                     <label className="!my-0">
-                    {userNotFound && (
+                    { userNotFound && (
                         <p className="text-error mb-2">
                             User not found.
+                        </p>
+                    )}
+                    { rolePermissionDenyModerate && (
+                        <p className="text-error mb-2">
+                            You don't have permissions to moderate.
                         </p>
                     )}
                     <input  type="text" 
