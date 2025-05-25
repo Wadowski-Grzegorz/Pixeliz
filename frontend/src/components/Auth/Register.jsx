@@ -12,11 +12,33 @@ const Register = () =>{
         password: ""
     });
 
-    const handleSubmit = (event) =>{
+    const [invalidCredentialsType, setInvalidCredentialsType ] = useState({
+        name: false,
+        login: false,
+        email: false
+    });
+
+    const handleSubmit = async (event) =>{
         event.preventDefault();
-        axios.post(`http://localhost:9090/api/auth/register`, credentials)
-            .then(response => setToken(response.data.token))
-            .catch(error => console.error('Error creating an user.', error));
+        try{
+            setInvalidCredentialsType({
+                name: false,
+                login: false,
+                email: false
+            });
+            const response = await axios.post(`http://localhost:9090/api/auth/register`, credentials);
+            setToken(response.data.token);
+            
+        } catch(error){
+            if(error.status === 409){
+                setInvalidCredentialsType((prev) =>({
+                    ...prev, 
+                    [error.response.data.error]: true
+                }));
+            } else {
+                console.error('Error creating an user.', error)
+            }
+        }
     }
 
     const handleChange = (event) =>{
@@ -31,6 +53,9 @@ const Register = () =>{
             <form onSubmit={handleSubmit}>
                 <label>
                     Username:
+                    { invalidCredentialsType.name && (
+                        <p className="text-error">Taken</p>
+                    )}
                     <input  type="text"
                             name="name"
                             value={credentials.name}
@@ -38,6 +63,9 @@ const Register = () =>{
                 </label>
                 <label>
                     Login:
+                    { invalidCredentialsType.login && (
+                        <p className="text-error">Taken</p>
+                    )}
                     <input  type="text"
                             name="login"
                             value={credentials.login}
@@ -45,6 +73,9 @@ const Register = () =>{
                 </label>
                 <label>
                     Email:
+                    { invalidCredentialsType.email && (
+                        <p className="text-error">Taken</p>
+                    )}
                     <input  type="email"
                             name="email"
                             value={credentials.email}
