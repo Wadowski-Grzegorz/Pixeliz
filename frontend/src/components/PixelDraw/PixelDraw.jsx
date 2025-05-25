@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { useAuth } from '../Auth/AuthProvider';
 import axios from 'axios';
-import Modal from "../common/Modal"
 import RoleAdd from '../Roles/RoleAdd'
 import Contributors from '../Roles/Contributors'
 
@@ -30,9 +29,11 @@ const PixelDraw = () => {
 
     const [redraw, setRedraw] = useState(false);
 
-    const [modalSave, setModalSave] = useState(false);
     const [addedFlag, setAddedFlag] = useState(0);
+    const [saveDenyLogin, setSaveDenyLogin] = useState(false);
     const [rolePermissionDenySave, setRolePermissionDenySave] = useState(false);
+
+    const [saveNamePlaceholder, setSaveNamePlaceholder] = useState("");
 
     useEffect(() => {
         const ctx = pixelsRef.current.getContext("2d");
@@ -43,11 +44,19 @@ const PixelDraw = () => {
         setRedraw(false);
     }, [redraw]);
 
-    useEffect(() =>{
+    useEffect(() => {
         if(id){
             loadDrawing(id);
         }
     }, []);
+
+    useEffect(() => {
+        if(token){
+            setSaveNamePlaceholder("Name your drawing");
+        } else{
+            setSaveNamePlaceholder("Only for logged in users");
+        }
+    }, [token])
 
     const drawPixels = () =>{
         const ctx = contextRef.current;
@@ -177,7 +186,7 @@ const PixelDraw = () => {
 
     const saveOrUpdateDrawing = async () => {
         if(!token){
-            toggleModalSave();
+            setSaveDenyLogin(true);
             return;
         }
 
@@ -194,10 +203,6 @@ const PixelDraw = () => {
         } catch(error){
             console.error('Error while sending click information:', error);
         }
-    }
-
-    const toggleModalSave = () => {
-        setModalSave(!modalSave);
     }
 
     const incAddedFlag = () => {
@@ -242,18 +247,23 @@ const PixelDraw = () => {
             </div>
 
             <div className="flex flex-col mt-2 gap-1">
+                { saveDenyLogin && (
+                    <p className="text-error mb-2">
+                        You must be logged in to save.
+                    </p>
+                )}
                 { rolePermissionDenySave && (
-                        <p className="text-error mb-2">
-                            You don't have permissions to edit.
-                        </p>
-                    )}
+                    <p className="text-error mb-2">
+                        You don't have permissions to edit.
+                    </p>
+                )}
                 <div className="flex flex-row gap-2 pb-1">
                     <input
                         type="text"
                         value={drawingName}
                         onChange={(e) => setDrawingName(e.target.value)}
                         className="!mt-0"
-                        placeholder="Name your drawing"/>
+                        placeholder={saveNamePlaceholder}/>
                     <button onClick={saveOrUpdateDrawing}>Save drawing</button>
                 </div>
             
@@ -264,7 +274,6 @@ const PixelDraw = () => {
                 )}
             </div>
 
-            <Modal isOpen={modalSave} onClose={toggleModalSave}>Please log in to save</Modal>
             { token && (
                 <div className="flex justify-between w-full mt-30 px-5 gap-5">
                     <div className="flex flex-row items-center">
