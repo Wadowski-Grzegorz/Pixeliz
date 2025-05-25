@@ -32,6 +32,7 @@ const PixelDraw = () => {
 
     const [modalSave, setModalSave] = useState(false);
     const [addedFlag, setAddedFlag] = useState(0);
+    const [rolePermissionDeny, setRolePermissionDeny] = useState(false);
 
     useEffect(() => {
         const ctx = pixelsRef.current.getContext("2d");
@@ -139,6 +140,7 @@ const PixelDraw = () => {
 
     const updateDrawing = async (id) => {
         try {
+            setRolePermissionDeny(false);
             const response = await axios.put(`http://localhost:9090/api/drawing/${id}`, 
                 {
                     pixels: pixels,
@@ -147,7 +149,11 @@ const PixelDraw = () => {
                 {headers: {"Content-Type": "application/json"}}
             );
         } catch(error){
-            console.error('Error while saving drawing:', error);
+            if(error.response && error.response.request.status === 404){
+                setRolePermissionDeny(true);
+            } else{
+                console.error('Error while saving drawing:', error);
+            }
         }
     }
     
@@ -232,6 +238,11 @@ const PixelDraw = () => {
             </div>
 
             <div className="flex flex-col mt-2 gap-1">
+                {rolePermissionDeny && (
+                        <p className="text-error mb-2">
+                            You don't have permissions to edit.
+                        </p>
+                    )}
                 <div className="flex flex-row gap-2 pb-1">
                     <input
                         type="text"
