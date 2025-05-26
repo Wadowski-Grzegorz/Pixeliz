@@ -11,7 +11,7 @@ function Navbar(){
         setFormSeen(!formSeen);
     };
 
-    const { token, userName } = useAuth();
+    const { token, userName, logout } = useAuth();
 
     return(
         <>
@@ -30,7 +30,9 @@ function Navbar(){
 
                 <div className="flex flex-row justify-between gap-4">
                     <Link to="/resources">Resources</Link>
-                    { token === null && (
+                    { token ? (
+                        <button onClick={logout} className="font-bold">Logout</button>
+                    ) : (
                         <>
                             <Link to="/login">Login</Link>
                             <Link to="/register">Register</Link>

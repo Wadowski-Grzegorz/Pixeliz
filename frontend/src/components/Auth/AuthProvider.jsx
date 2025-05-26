@@ -32,11 +32,17 @@ const AuthProvider = ({ children }) => {
         }
     }
 
+    const logout = () => {
+        setToken(null);
+        setUserName("");
+    }
+
     const contextValue = useMemo(
         () => ({
             token,
             setToken,
-            userName
+            userName,
+            logout
         }),
         [token, userName]
     );
