@@ -21,7 +21,7 @@ const Contributors = ({ drawingId, reload }) => {
     
     return (
         <div className="overflow-x-auto">
-            <table className="border border-myFinish shadow-md rounded">
+            <table className="border border-myFinish shadow-md rounded mb-10 md:mb-1">
                 <thead className="bg-myBack text-left">
                     <tr>
                         <th className="border-b border-myFinish px-4 py-2 text-myTextHeavy">Username</th>
