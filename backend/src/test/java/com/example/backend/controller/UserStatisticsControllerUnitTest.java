@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = {UserStatisticsController.class})
 @ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class UserStatisticsControllerTest {
+public class UserStatisticsControllerUnitTest {
 
     @Autowired
     private MockMvc mockMvc;
