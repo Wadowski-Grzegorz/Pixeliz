@@ -5,10 +5,11 @@ import com.example.backend.service.UserStatisticsService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/user/stats")
@@ -30,8 +31,9 @@ public class UserStatisticsController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> clickUserStatistics(Principal principal) {
-        String username = principal.getName();
+    public ResponseEntity<?> clickUserStatistics() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
         userStatisticsService.clickToQueue(username);
         return new ResponseEntity<>(HttpStatus.OK);
     }
