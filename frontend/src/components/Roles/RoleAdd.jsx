@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Modal from "../common/Modal"
+import { useAuth } from "../Auth/AuthProvider";
 
 const RoleAdd = ({ drawingId, incAddedFlag}) => {
     const [roles, setRoles] = useState([]);
@@ -11,6 +12,7 @@ const RoleAdd = ({ drawingId, incAddedFlag}) => {
     const [modalOpen, setModalOpen] = useState(false);
     const [userNotFound, setUserNotFound] = useState(false);
     const [rolePermissionDenyModerate, setRolePermissionDenyModerate] = useState(false);
+    const { token } = useAuth();
 
 
     const getRoles = async () => {
@@ -44,8 +46,10 @@ const RoleAdd = ({ drawingId, incAddedFlag}) => {
     }
 
     useEffect(() => {
+        if(token){
             getRoles();
-    }, []);
+        }
+    }, [token]);
 
     const handleChange = (event) => {
         setFormData({ ...formData, [event.target.name]: event.target.value });

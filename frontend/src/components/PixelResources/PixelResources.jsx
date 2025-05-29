@@ -3,10 +3,12 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRotateRight } from "@fortawesome/free-solid-svg-icons";
+import { useAuth } from "../Auth/AuthProvider";
 
 const PixelResources = () =>{
 
     const [drawings, setDrawings] = useState([]);
+    const { token } = useAuth();
 
     const fetchDrawings = () =>{
         axios.get(`http://localhost:9090/api/drawing/me`)
@@ -17,7 +19,9 @@ const PixelResources = () =>{
     };
 
     useEffect(() =>{
-        fetchDrawings();
+        if(token){
+            fetchDrawings();
+        }
     }, []);
 
     return(
