@@ -120,8 +120,4 @@ class AuthControllerUnitTest {
         response.andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.details.password").exists());
     }
-
-    @Test
-    void logout() {
-    }
 }
