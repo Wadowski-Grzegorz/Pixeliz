@@ -11,7 +11,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name="user_statistics")
+@Table(name="user_statistics",
+    indexes = @Index(name = "idx_click_count", columnList = "click_count")
+)
 public class UserStatistics {
 
     @Id

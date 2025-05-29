@@ -19,7 +19,10 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name="users")
+@Table(
+        name="users",
+        indexes = @Index(name = "idx_security_role", columnList = "securityRole")
+)
 public class User implements UserDetails{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

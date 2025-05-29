@@ -10,6 +10,14 @@ import org.antlr.v4.runtime.misc.NotNull;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(
+        name = "user_drawing_role",
+        indexes = {
+                @Index(name = "idx_user_drawing", columnList = "user_id, drawing_id"),
+                @Index(name = "idx_user", columnList = "user_id"),
+                @Index(name = "idx_drawing", columnList = "drawing_id")
+        }
+)
 public class UserDrawingRole {
     @EmbeddedId
     @EqualsAndHashCode.Include

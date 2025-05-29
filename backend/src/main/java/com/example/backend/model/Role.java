@@ -13,6 +13,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(indexes = @Index(name = "idx_admin", columnList = "admin"))
 public class Role {
 
     @Id

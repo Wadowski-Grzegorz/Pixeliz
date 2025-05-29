@@ -15,6 +15,7 @@ import org.hibernate.type.SqlTypes;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(indexes = @Index(name = "idx_name", columnList = "name"))
 public class Drawing {
 
     @Id
@@ -33,6 +34,4 @@ public class Drawing {
     @JsonIgnore
     @OneToMany(mappedBy = "drawing", cascade = CascadeType.REMOVE, orphanRemoval = true)
     Set<UserDrawingRole> userDrawingRoles;
-
-
 }
