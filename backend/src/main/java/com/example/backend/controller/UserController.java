@@ -226,7 +226,7 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         boolean isAdmin = authentication.getAuthorities().stream()
-                        .anyMatch(r -> r.getAuthority().equals("ADMIN"));
+                        .anyMatch(r -> r.getAuthority().equals("ROLE_ADMIN"));
 
         AuthResponseDTO update = userService.updateUser(id, userDTO, username, isAdmin);
         return new ResponseEntity<>(update, HttpStatus.OK);
@@ -264,7 +264,7 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         boolean isAdmin = authentication.getAuthorities().stream()
-                        .anyMatch(r -> r.getAuthority().equals("ADMIN"));
+                        .anyMatch(r -> r.getAuthority().equals("ROLE_ADMIN"));
 
         userService.deleteUser(id, username, isAdmin);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
