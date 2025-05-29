@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -36,10 +37,14 @@ public class UserController {
         this.userService = userService;
     }
 
-    @Operation(summary = "Get specific user")
+    @Operation(
+            summary = "Get specific user",
+            description = "Can be used only by admin to get specific user"
+    )
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
+                    description = "Successfully got user",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = User.class)
@@ -47,6 +52,7 @@ public class UserController {
             ),
             @ApiResponse(
                     responseCode = "404",
+                    description = "There is no such user",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ApiExceptionResponse.class)
@@ -54,6 +60,7 @@ public class UserController {
             ),
             @ApiResponse(
                     responseCode = "403",
+                    description = "Need JWT token with admin security role",
                     content = @Content()
             )
     })
@@ -65,6 +72,35 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Get summary of the user",
+            description = "Can be used only by any user to get summary of specific user"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successfully got summary",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = "{ \"id\": \"1\", \"name\": \"Jamal\", }"
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "There is no such user",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ApiExceptionResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Need JWT token",
+                    content = @Content()
+            )
+    })
     @GetMapping("/{id}/summary")
     public ResponseEntity<UserDTO> getUserSummary(
             @Parameter(description = "ID of user to be fetched")
@@ -74,6 +110,35 @@ public class UserController {
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Get summary of the user which called request",
+            description = "Can be used by any user to get his summary"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successfully got summary",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = "{ \"id\": \"1\", \"name\": \"Jamal\", }"
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "There is no such user",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ApiExceptionResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Need JWT token",
+                    content = @Content()
+            )
+    })
     @GetMapping("/summary")
     public ResponseEntity<UserDTO> getMySummary(
     ){
@@ -84,10 +149,14 @@ public class UserController {
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
-    @Operation(summary = "Get all users")
+    @Operation(
+            summary = "Get all users",
+            description = "Can be used only by admin to get list of users"
+    )
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
+                    description = "Successfully got list of users",
                     content = @Content(
                             mediaType = "application/json",
                             array = @ArraySchema(schema = @Schema(implementation = User.class))
@@ -95,6 +164,7 @@ public class UserController {
             ),
             @ApiResponse(
                     responseCode = "403",
+                    description = "Need JWT token with admin security role",
                     content = @Content()
             )
     })
@@ -105,11 +175,13 @@ public class UserController {
 
     @Operation(
             summary = "Update specific user",
-            description = "Update only provided fields of specific user, returns jwt token"
+            description = "Update only provided fields of specific user, returns jwt token."
+            + "Users can update only their data. Admin can edit any user"
     )
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
+                    description = "Successfully updated user",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = AuthResponseDTO.class)
@@ -117,6 +189,7 @@ public class UserController {
             ),
             @ApiResponse(
                     responseCode = "404",
+                    description = "No such user found",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ApiExceptionResponse.class)
@@ -124,6 +197,7 @@ public class UserController {
             ),
             @ApiResponse(
                     responseCode = "409",
+                    description = "New credentials are already taken",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ApiExceptionResponse.class)
@@ -131,6 +205,7 @@ public class UserController {
             ),
             @ApiResponse(
                     responseCode = "400",
+                    description = "Invalid input",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ApiExceptionResponse.class)
@@ -138,12 +213,13 @@ public class UserController {
             ),
             @ApiResponse(
                     responseCode = "403",
+                    description = "Need JWT token",
                     content = @Content()
             )
     })
     @PutMapping("/{id}")
     public ResponseEntity<AuthResponseDTO> updateUser(
-            @Parameter(description = "ID of role to be fetched")
+            @Parameter(description = "ID of the user to update")
             @PathVariable Long id,
             @RequestBody @Validated(UserDTO.Update.class) UserDTO userDTO
     ){
@@ -156,14 +232,19 @@ public class UserController {
         return new ResponseEntity<>(update, HttpStatus.OK);
     }
 
-    @Operation(summary = "Delete specific user")
+    @Operation(
+            summary = "Delete specific user",
+            description = "User can delete himself. Admin can delete any user"
+    )
     @ApiResponses({
             @ApiResponse(
                     responseCode = "204",
+                    description = "Successfully deleted user",
                     content = @Content()
             ),
             @ApiResponse(
                     responseCode = "404",
+                    description = "No such user found",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ApiExceptionResponse.class)
@@ -171,11 +252,13 @@ public class UserController {
             ),
             @ApiResponse(
                     responseCode = "403",
+                    description = "Need JWT token",
                     content = @Content()
             )
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(
+            @Parameter(description = "ID of the user to delete")
             @PathVariable Long id
     ){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

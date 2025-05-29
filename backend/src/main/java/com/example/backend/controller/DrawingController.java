@@ -38,11 +38,14 @@ public class DrawingController {
     }
 
     @Operation(
-            summary = "Create drawing"
+            summary = "Create a new drawing",
+            description = "Creates a new drawing assigned to user which sent request."
+                + " This user have all rights to this drawing"
     )
     @ApiResponses({
             @ApiResponse(
                     responseCode = "204",
+                    description = "Successfully created drawing",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = Drawing.class)
@@ -50,6 +53,7 @@ public class DrawingController {
             ),
             @ApiResponse(
                     responseCode = "400",
+                    description = "Invalid input",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ApiExceptionResponse.class)
@@ -57,6 +61,7 @@ public class DrawingController {
             ),
             @ApiResponse(
                     responseCode = "403",
+                    description = "Need JWT token",
                     content = @Content()
             )
     })
@@ -69,10 +74,16 @@ public class DrawingController {
         return new ResponseEntity<>(drawing, HttpStatus.CREATED);
     }
 
-    @Operation(summary = "Get specific drawing")
+    @Operation(
+            summary = "Get specific drawing",
+            description = "Returns a drawing with a role for user that sent request."
+                + " Works when user which sent request have permissions for read a drawing."
+                + " Admin can see all drawings"
+    )
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
+                    description = "Successfully got drawing",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = Drawing.class)
@@ -80,6 +91,7 @@ public class DrawingController {
             ),
             @ApiResponse(
                     responseCode = "404",
+                    description = "There is no such drawing",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ApiExceptionResponse.class)
@@ -87,6 +99,7 @@ public class DrawingController {
             ),
             @ApiResponse(
                     responseCode = "403",
+                    description = "Need JWT token",
                     content = @Content()
             )
     })
@@ -96,15 +109,18 @@ public class DrawingController {
         String username = authentication.getName();
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(r -> r.getAuthority().equals("ADMIN"));
-
         DrawingRoleDTO drawingRoleDTO = drawingService.getDrawing(id, username, isAdmin);
         return new ResponseEntity<>(drawingRoleDTO, HttpStatus.OK);
     }
 
-    @Operation(summary = "Get all drawings")
+    @Operation(
+            summary = "Get all drawings",
+            description = "Get all existing drawings from all users. Only for admin"
+    )
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
+                    description = "Successful, returns all drawings",
                     content = @Content(
                             mediaType = "application/json",
                             array = @ArraySchema(schema = @Schema(implementation = Drawing.class))
@@ -112,6 +128,7 @@ public class DrawingController {
             ),
             @ApiResponse(
                     responseCode = "403",
+                    description = "Unauthorized, only admin can request",
                     content = @Content()
             )
     })
@@ -122,25 +139,21 @@ public class DrawingController {
 
     @Operation(
             summary = "Update specific drawing",
-            description = "Can only update name and pixels fields of specific drawing"
+            description = "Can only update name and pixels fields of specific drawing."
+                + " User that called need to have permissions for editing a drawing"
     )
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
+                    description = "Returns updated drawing",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = Drawing.class)
                     )
             ),
             @ApiResponse(
-                    responseCode = "404",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ApiExceptionResponse.class)
-                    )
-            ),
-            @ApiResponse(
                     responseCode = "400",
+                    description = "Invalid input",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ApiExceptionResponse.class)
@@ -148,7 +161,16 @@ public class DrawingController {
             ),
             @ApiResponse(
                     responseCode = "403",
+                    description = "Unauthorized, only admin can request",
                     content = @Content()
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "There is no such drawing",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ApiExceptionResponse.class)
+                    )
             )
     })
     @PutMapping("/{id}")
@@ -161,14 +183,20 @@ public class DrawingController {
         return new ResponseEntity<>(drawing, HttpStatus.OK);
     }
 
-    @Operation(summary = "Delete specific drawing")
+    @Operation(
+            summary = "Delete specific drawing",
+            description = "Delete a drawing, user which sent request must have permissions for delete."
+                    + " Admin can delete all drawings"
+    )
     @ApiResponses({
             @ApiResponse(
                     responseCode = "204",
+                    description = "Successfully deleted drawing",
                     content = @Content()
             ),
             @ApiResponse(
                     responseCode = "404",
+                    description = "There is no such drawing",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ApiExceptionResponse.class)
@@ -176,6 +204,7 @@ public class DrawingController {
             ),
             @ApiResponse(
                     responseCode = "403",
+                    description = "Need JWT token",
                     content = @Content()
             )
     })
@@ -189,7 +218,25 @@ public class DrawingController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-
+    @Operation(
+            summary = "Get drawings assigned to user",
+            description = "Get all drawings from user that sent a request"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successful, returns drawings with a role for each drawing",
+                    content = @Content(
+                            mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = Drawing.class))
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Need JWT token",
+                    content = @Content()
+            )
+    })
     @GetMapping("/me")
     public ResponseEntity<List<DrawingRoleDTO>> getUserDrawings() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -200,13 +247,14 @@ public class DrawingController {
 
 
     @Operation(
-            summary = "Give user permission to drawing",
+            summary = "Give user specific permission to access a drawing",
             description = "Create new relation between user-drawing. " +
                     "Assign role which specify what user can do with this drawing"
     )
     @ApiResponses({
             @ApiResponse(
                     responseCode = "204",
+                    description = "Successfully assigned access for drawing",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = Drawing.class)
@@ -214,6 +262,7 @@ public class DrawingController {
             ),
             @ApiResponse(
                     responseCode = "400",
+                    description = "Invalid input",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ApiExceptionResponse.class)
@@ -221,6 +270,7 @@ public class DrawingController {
             ),
             @ApiResponse(
                     responseCode = "404",
+                    description = "There is no such drawing, user or user called ",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ApiExceptionResponse.class)
@@ -228,12 +278,18 @@ public class DrawingController {
             ),
             @ApiResponse(
                     responseCode = "403",
-                    content = @Content()
+                    description = "Unauthorized, need JWT token or user that sent request"
+                        + " don't have permission to admin a drawing",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ApiExceptionResponse.class)
+                    )
             )
     })
     @PostMapping("/{id}/user")
-    public ResponseEntity<?> addUserToDrawing(@PathVariable Long id,
-                                              @RequestBody @Valid AddUserToDrawingDTO addUserToDrawingDTO
+    public ResponseEntity<?> addUserToDrawing(
+            @PathVariable Long id,
+            @RequestBody @Valid AddUserToDrawingDTO addUserToDrawingDTO
     ){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -241,10 +297,14 @@ public class DrawingController {
         return new ResponseEntity<>(relation, HttpStatus.CREATED);
     }
 
-    @Operation(summary = "Get all users assigned to specific drawing")
+    @Operation(
+            summary = "Get all users assigned to specific drawing",
+            description = "Can be used by any user to get list of users with their permissions to a drawing"
+    )
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
+                    description = "Successfully got list of users and roles",
                     content = @Content(
                             mediaType = "application/json",
                             array = @ArraySchema(schema = @Schema(implementation = UserRoleDTO.class))
@@ -252,6 +312,7 @@ public class DrawingController {
             ),
             @ApiResponse(
                     responseCode = "404",
+                    description = "There is no such drawing",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ApiExceptionResponse.class)
@@ -259,6 +320,7 @@ public class DrawingController {
             ),
             @ApiResponse(
                     responseCode = "403",
+                    description = "Need JWT token with permission to moderate",
                     content = @Content()
             )
     })
@@ -267,10 +329,14 @@ public class DrawingController {
         return new ResponseEntity<>(drawingService.getDrawingUsers(id), HttpStatus.OK);
     }
 
-    @Operation(summary = "Get specific user assigned to specific drawing")
+    @Operation(
+            summary = "Get specific user assigned to specific drawing",
+            description = "Can be used by any user to get user with their permission to a drawing"
+    )
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
+                    description = "Successfully got user and his role",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = UserRoleDTO.class)
@@ -278,6 +344,7 @@ public class DrawingController {
             ),
             @ApiResponse(
                     responseCode = "404",
+                    description = "User or drawing not found",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ApiExceptionResponse.class)
@@ -285,6 +352,7 @@ public class DrawingController {
             ),
             @ApiResponse(
                     responseCode = "403",
+                    description = "Need JWT token",
                     content = @Content()
             )
     })
@@ -298,11 +366,14 @@ public class DrawingController {
     }
 
     @Operation(
-            summary = "Update role in UserDrawingRole for specific relation"
+            summary = "Update role of a user with a drawing",
+            description = "Update existing relation between user and drawing."
+                + " User which make request must have permissions to moderate a drawing"
     )
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
+                    description = "Successfully edited relation",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = UserRoleDTO.class)
@@ -310,6 +381,7 @@ public class DrawingController {
             ),
             @ApiResponse(
                     responseCode = "404",
+                    description = "There is no such relation",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ApiExceptionResponse.class)
@@ -317,6 +389,7 @@ public class DrawingController {
             ),
             @ApiResponse(
                     responseCode = "400",
+                    description = "Invalid input",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ApiExceptionResponse.class)
@@ -324,6 +397,7 @@ public class DrawingController {
             ),
             @ApiResponse(
                     responseCode = "403",
+                    description = "Need JWT token with permission to moderate",
                     content = @Content()
             )
     })
@@ -342,14 +416,20 @@ public class DrawingController {
                 HttpStatus.OK);
     }
 
-    @Operation(summary = "Delete specific UserDrawingRole")
+    @Operation(
+            summary = "Delete specific relation between user and drawing",
+            description = "Delete existing relation between user and drawing."
+                    + " User which make request must have permissions to moderate a drawing"
+    )
     @ApiResponses({
             @ApiResponse(
                     responseCode = "204",
+                    description = "Successfully deleted a relation",
                     content = @Content()
             ),
             @ApiResponse(
                     responseCode = "404",
+                    description = "No such relation found",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ApiExceptionResponse.class)
@@ -357,6 +437,7 @@ public class DrawingController {
             ),
             @ApiResponse(
                     responseCode = "403",
+                    description = "Need JWT token with permission to moderate",
                     content = @Content()
             )
     })
@@ -372,6 +453,4 @@ public class DrawingController {
         drawingService.deleteUserDrawingRole(id, userId, username);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
-
 }

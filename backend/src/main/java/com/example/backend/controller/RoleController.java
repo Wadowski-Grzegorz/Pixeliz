@@ -31,10 +31,14 @@ public class RoleController {
         this.roleService = roleService;
     }
 
-    @Operation(summary = "Get all roles")
+    @Operation(
+            summary = "Get all roles",
+            description = "Any user can request this endpoint to get all roles"
+    )
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
+                    description = "Successfully got list of roles",
                     content = @Content(
                             mediaType = "application/json",
                             array = @ArraySchema(schema = @Schema(implementation = Role.class))
@@ -42,6 +46,7 @@ public class RoleController {
             ),
             @ApiResponse(
                     responseCode = "403",
+                    description = "Need JWT token",
                     content = @Content()
             )
     })
@@ -50,10 +55,14 @@ public class RoleController {
         return new ResponseEntity<>(roleService.getRoles(), HttpStatus.OK);
     }
 
-    @Operation(summary = "Get specific role")
+    @Operation(
+            summary = "Get specific role",
+            description = "Any user can request this endpoint to get specific role"
+    )
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
+                    description = "Successfully got a role",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = Role.class)
@@ -61,6 +70,7 @@ public class RoleController {
             ),
             @ApiResponse(
                     responseCode = "404",
+                    description = "There is no such role",
                     content = @Content(
                         mediaType = "application/json",
                         schema = @Schema(implementation = RoleNotFoundException.class)
@@ -68,6 +78,7 @@ public class RoleController {
             ),
             @ApiResponse(
                     responseCode = "403",
+                    description = "Need JWT token",
                     content = @Content()
             )
     })

@@ -4,11 +4,10 @@ import com.example.backend.dto.AuthResponseDTO;
 import com.example.backend.dto.LoginDTO;
 import com.example.backend.dto.UserDTO;
 import com.example.backend.exception.ApiExceptionResponse;
-import com.example.backend.model.Drawing;
-import com.example.backend.model.User;
 import com.example.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -31,12 +30,13 @@ public class AuthController {
     }
 
     @Operation(
-            summary = "Create new account",
-            description = "Create new user, return token"
+            summary = "Register a new user",
+            description = "Creates a new user account, returns JWT token"
     )
     @ApiResponses({
             @ApiResponse(
                     responseCode = "204",
+                    description = "User created successfully",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = AuthResponseDTO.class)
@@ -44,9 +44,21 @@ public class AuthController {
             ),
             @ApiResponse(
                     responseCode = "400",
+                    description = "Invalid input",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ApiExceptionResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Credentials not unique",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ApiExceptionResponse.class),
+                            examples = @ExampleObject(
+                                    value = "{ \"status\": 409, \"error\": \"email\" }"
+                            )
                     )
             )
     })
@@ -58,11 +70,12 @@ public class AuthController {
 
     @Operation(
             summary = "Login to application",
-            description = "Login using credentials of existing user, return token."
+            description = "Validates credentials of existing user, returns JWT token"
     )
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
+                    description = "Successful login",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = AuthResponseDTO.class)
@@ -70,9 +83,21 @@ public class AuthController {
             ),
             @ApiResponse(
                     responseCode = "400",
+                    description = "Invalid input",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ApiExceptionResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Bad credentials",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ApiExceptionResponse.class),
+                            examples = @ExampleObject(
+                                    value = "{ \"status\": 401, \"error\": \"Invalid credentials\" }"
+                            )
                     )
             )
     })
@@ -80,10 +105,5 @@ public class AuthController {
     public ResponseEntity<AuthResponseDTO> login(@RequestBody @Valid LoginDTO loginDTO){
         AuthResponseDTO response = userService.login(loginDTO);
         return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @PostMapping("logout")
-    public ResponseEntity<?> logout(){
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 }
