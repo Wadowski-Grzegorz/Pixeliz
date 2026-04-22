@@ -5,7 +5,7 @@ Web application for creating drawings in pixel art format. Users can collaborate
 ## Functionalities
 - Create drawing as not logged in user
 - Create, store and collaborate on drawing as logged in user
-- Statistics per user
+- Statistics per user collected with RabbitMQ
 - Safe communication with JWT
 
 
@@ -21,6 +21,26 @@ Web application for creating drawings in pixel art format. Users can collaborate
 
 ## Install and Run
 
+All steps should be executed from the root directory of the repository.
+
+### Infrastructure
+**Requirements:**
+    - Docker
+
+```bash
+docker compose up --build -d
+```
+
+### Backend
+**Requirements:**
+    - at least Java 17
+    - Maven
+
+```bash
+cd backend
+mvnw.cmd spring-boot:run
+```
+
 ### Frontend
 **Requirements:**
     - Node.js
@@ -33,17 +53,6 @@ npm run dev
 ```
 
 Open in web browser: http://localhost:5173
-
-### Backend
-**Requirements:**
-    - at least Java 17
-    - Maven
-    - Docker
-
-```bash
-docker compose up --build
-cd frontend
-```
 
 ## Database schema
 
