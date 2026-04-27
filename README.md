@@ -3,13 +3,19 @@
 Web application for creating drawings in pixel art format. Users can collaborate on a drawing using rank-based access control.
 
 ## Demo
+
+Short walkthrough presenting:
+- creating pixel art as an authenticated user
+- assigning view-only permissions to another user
+- the application from a view-only user's perspective
+
 https://github.com/user-attachments/assets/6a5ef341-bfb9-41fe-ad05-0869b84f9649
 
 ## Functionalities
-- Create drawings as a guest user.
-- Create, store and collaborate with other users on drawings as an authenticated user.
-- User statistics collected asynchronously using RabbitMQ events.
-- Secure communication using JWT authentication.
+- Create drawings as a guest user
+- Create, store and collaborate with other users on drawings as an authenticated user
+- User statistics collected asynchronously using RabbitMQ events
+- Secure communication using JWT authentication
 
 
 ## Technologies
