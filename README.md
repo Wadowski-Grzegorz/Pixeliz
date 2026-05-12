@@ -11,12 +11,11 @@ Short walkthrough presenting:
 
 https://github.com/user-attachments/assets/6a5ef341-bfb9-41fe-ad05-0869b84f9649
 
-## Functionalities
+## Features
 - Create drawings as a guest user
 - Create, store and collaborate with other users on drawings as an authenticated user
 - User statistics collected asynchronously using RabbitMQ events
 - Secure communication using JWT authentication
-
 
 ## Technologies
 
@@ -29,6 +28,13 @@ https://github.com/user-attachments/assets/6a5ef341-bfb9-41fe-ad05-0869b84f9649
 **JWT** - Authentication and authorization for secure communication.
 
 **RabbitMQ** - Asynchronous processing of user events.
+
+## Testing
+
+The backend is covered by unit and integration tests.
+
+- Unit tests for controllers, services, and repositories
+- Integration tests for REST API endpoints, authentication flow, and asynchronous event processing with RabbitMQ
 
 ## System architecture
 
