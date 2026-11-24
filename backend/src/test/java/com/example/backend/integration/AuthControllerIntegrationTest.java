@@ -122,8 +122,8 @@ public class AuthControllerIntegrationTest {
                 .content(objectMapper.writeValueAsString(loginDTO)));
 
         // verify
-        response.andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.details").isNotEmpty());
+        response.andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").isNotEmpty());
     }
 
 
