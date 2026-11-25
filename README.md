@@ -50,38 +50,17 @@ Client-server architecture with a layered backend.
 
 ## Install and Run
 
-All steps should be executed from the root directory of the repository.
-
-### Infrastructure
 **Requirements:**
-    - Docker
+- Docker
 
+### Start
+Clone the repository and run the following command from its root directory:
 ```bash
 docker compose up --build -d
 ```
 
-### Backend
-**Requirements:**
-    - at least Java 17
-    - Maven
+Open in web browser: http://localhost
 
-```bash
-cd backend
-./mvnw spring-boot:run
-```
-
-### Frontend
-**Requirements:**
-    - Node.js
-    - npm
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Open in web browser: http://localhost:5173
 
 ## Database schema
 
