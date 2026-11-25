@@ -11,7 +11,7 @@ const PixelResources = () =>{
     const { token } = useAuth();
 
     const fetchDrawings = () =>{
-        axios.get(`http://localhost:9090/api/drawing/me`)
+        axios.get(`/api/drawing/me`)
             .then(response =>{
                 setDrawings(response.data)
             })

@@ -17,7 +17,7 @@ const RoleAdd = ({ drawingId, incAddedFlag}) => {
 
     const getRoles = async () => {
         try {
-            const response = await axios.get('http://localhost:9090/api/role');
+            const response = await axios.get('/api/role');
             setRoles(response.data);
         } catch(error){
             console.error('Error while fetching roles:', error);
@@ -28,7 +28,7 @@ const RoleAdd = ({ drawingId, incAddedFlag}) => {
         try {
             setUserNotFound(false);
             setRolePermissionDenyModerate(false);
-            await axios.post(`http://localhost:9090/api/drawing/${drawingId}/user`, 
+            await axios.post(`/api/drawing/${drawingId}/user`,
                 formData,
                 {headers: {"Content-Type": "application/json"}}
             );

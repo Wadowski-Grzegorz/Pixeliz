@@ -26,7 +26,7 @@ const Register = () =>{
                 login: false,
                 email: false
             });
-            const response = await axios.post(`http://localhost:9090/api/auth/register`, credentials);
+            const response = await axios.post(`/api/auth/register`, credentials);
             setToken(response.data.token);
             
         } catch(error){

@@ -24,7 +24,7 @@ const AuthProvider = ({ children }) => {
 
     const setUserSummary = async () => {
         try{
-            const response = await axios.get('http://localhost:9090/api/user/summary');
+            const response = await axios.get('/api/user/summary');
             setUserName(response.data.name);
         }
         catch(error){

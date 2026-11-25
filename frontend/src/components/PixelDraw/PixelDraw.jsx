@@ -132,7 +132,7 @@ const PixelDraw = () => {
 
     const saveDrawing = async () => {
         try {
-            const response = await axios.post('http://localhost:9090/api/drawing', 
+            const response = await axios.post('/api/drawing',
                 {
                     pixels: pixels,
                     name: drawingName,
@@ -150,7 +150,7 @@ const PixelDraw = () => {
     const updateDrawing = async (id) => {
         try {
             setRolePermissionDenySave(false);
-            const response = await axios.put(`http://localhost:9090/api/drawing/${id}`, 
+            const response = await axios.put(`/api/drawing/${id}`,
                 {
                     pixels: pixels,
                     name: drawingName
@@ -171,7 +171,7 @@ const PixelDraw = () => {
             return;
         }
         try {
-            const response = await axios.get(`http://localhost:9090/api/drawing/${id}`);
+            const response = await axios.get(`/api/drawing/${id}`);
             const data = response.data;
             setPixels(data.drawing.pixels);
             setDrawingName(data.drawing.name);
@@ -199,7 +199,7 @@ const PixelDraw = () => {
 
     const clickDrawingStat = async () => {
         try {
-            await axios.post('http://localhost:9090/api/user/stats');
+            await axios.post('/api/user/stats');
         } catch(error){
             console.error('Error while sending click information:', error);
         }

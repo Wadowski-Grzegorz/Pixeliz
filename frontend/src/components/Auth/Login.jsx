@@ -17,7 +17,7 @@ const Login = () =>{
         event.preventDefault();
         try{
             setInvalidCredentials(false);
-            const response = await axios.post(`http://localhost:9090/api/auth/login`, credentials);  
+            const response = await axios.post(`/api/auth/login`, credentials);
             setToken(response.data.token);
         } catch(error){
             if(error.status === 401){
