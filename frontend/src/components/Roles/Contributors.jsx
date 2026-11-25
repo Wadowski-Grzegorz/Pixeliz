@@ -6,7 +6,7 @@ const Contributors = ({ drawingId, reload }) => {
 
     const getContributors = async () => {
         try {
-            const response = await axios.get(`http://localhost:9090/api/drawing/${drawingId}/user`);
+            const response = await axios.get(`/api/drawing/${drawingId}/user`);
             setContributors(response.data);
         } catch(error){
             console.error('Error while fetching contributors:', error);
